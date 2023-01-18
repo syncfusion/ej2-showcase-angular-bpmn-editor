@@ -1,0 +1,901 @@
+<!-- <div class="control-section">
+  <div style="width: 100%">
+      <div class="sb-mobile-palette-bar">
+          <div id="palette-icon" style="float: right;" role="button" class="e-ddb-icons1 e-toggle-palette"></div>
+      </div>
+      <div id="palette-space" class="sb-mobile-palette">
+          <ejs-symbolpalette id="symbolpalette" [expandMode]='expandMode' [palettes]='palettes' width="100%" height="700px" [symbolHeight]=60 [symbolWidth]=60 [symbolMargin]='symbolMargin' [getSymbolInfo]='getSymbolInfo' [getNodeDefaults]='getSymbolDefaults'>
+          </ejs-symbolpalette>
+      </div>
+      <div id="diagram-space" class="sb-mobile-diagram">
+          <div class="content-wrapper">
+              <ejs-diagram #diagram id="diagram" 
+               width="100%" height="700px" [snapSettings]='snapSettings'
+              (created)="created()" 
+              (dragEnter)="dragEnter($event)" (created)="diagramCreate($event)"
+              [getConnectorDefaults]='connDefaults' [getNodeDefaults]='nodeDefaults' 
+              [nodes]="nodes"
+              [connectors]="connectors">
+              </ejs-diagram>
+          </div>
+      </div>
+  </div>
+</div> -->
+<!-- <div class="row">
+    <div id="dropArea">
+        <span id="dropRegion" class="droparea"> Drop files here or
+            <a href="" id="browseFile">
+                <u>Browse</u>
+            </a>
+        </span>
+        <ejs-uploader #defaultupload id='defaultfileupload' [asyncSettings]='path' (success)='onUploadSuccess($event)' (failure)='onUploadFailure($event)'
+            (progress)='onUploadFileSelected($event)'>
+        </ejs-uploader>
+    </div>
+</div> -->
+<input type="file" id="fileupload" name="UploadFiles">
+<style>
+    .e-file-select-wrap {
+        display: none;
+    }
+    #conTypeBtn {
+        width: 45px!important;
+        height: 35px;
+        padding: 0px 0px 0px 0px;
+    }
+    #designContextMenu,#toolsContextMenu{
+        width: 100px !important;
+    }
+    #editContextMenu{
+        width: 120px !important;
+    }
+    /* .editMenu{
+        width: 120px;
+    } */
+    #hideProperty{
+        width: 28px;
+        height: 28px;
+        margin-left: 30px;
+        margin-bottom: 7px !important;
+    }
+    .db-toolbar-container{
+        width: 100%!important;
+    }
+    .close{
+        float: right;
+        border-color: #b5b5b5;
+    }
+    #js-licensing{
+        display: none;
+    }   
+    .pan-item{
+        margin-left: 3px;
+    } 
+    .e-contextmenu-wrapper{
+        width: 100px !important;
+    }
+    .designMenu{
+        width: 100px !important;
+    }
+</style>
+<ejs-contextmenu id='editContextMenu' [animationSettings]='animationSettings' [items]='dropDownDataSources.getEditMenuItems'
+    (onOpen)='utilityMethods.editContextMenuOpen($event)' cssClass="editMenu" (beforeItemRender)="beforeItemRender($event)"
+    (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)" (select)="menuClick($event)">
+    <!-- (beforeOpen)="arrangeMenuBeforeOpen($event)"  -->
+</ejs-contextmenu>
+<ejs-contextmenu id='designContextMenu' #designContextMenu [animationSettings]='animationSettings' [items]='dropDownDataSources.getDesignMenuItems'
+    (onOpen)='utilityMethods.designContextMenuOpen($event)' cssClass="designMenu" (beforeItemRender)="beforeItemRender($event)"
+    (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)" (select)="menuClick($event)">
+    <!-- (beforeOpen)="arrangeMenuBeforeOpen($event)"  -->
+</ejs-contextmenu>
+<ejs-contextmenu id='toolsContextMenu' #toolsContextMenu [animationSettings]='animationSettings' [items]='dropDownDataSources.getToolsMenuItems'
+    (onOpen)='utilityMethods.toolsContextMenuOpen($event)' cssClass="toolsMenu" (beforeItemRender)="beforeItemRender($event)"
+    (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)" (select)="menuClick($event)">
+    <!-- (beforeOpen)="arrangeMenuBeforeOpen($event)"  -->
+</ejs-contextmenu>
+<div class='diagrambuilder-container'>
+  <div class='header navbar'>
+      <div class="db-header-container">
+          <div class="db-diagram-name-container">
+              <span id='diagramName' class="db-diagram-name" (click)='renameDiagram($event)'>Untitled Diagram</span>
+              <input id='diagramEditable' type="text" class="db-diagram-name" (keydown)='diagramNameKeyDown($event)' (focusout)='diagramNameChange($event)'
+              />
+              <span id='diagramreport' class="db-diagram-name" style="float:right"></span>
+          </div>
+           <div class='db-menu-container'>
+              <div class="db-menu-style">
+                  <button ejs-dropdownbutton id="btnFileMenu" #btnFileMenu cssClass='db-dropdown-menu'  content="File"
+                  [items]='dropDownDataSources.getFileMenuItems' (select)="menuClick($event)"
+                  (beforeItemRender)="beforeItemRender($event)"
+                  (beforeOpen)="utilityMethods.arrangeMenuBeforeOpen($event)" 
+                  (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)"
+                      >
+                  </button>
+              </div>
+              <div class="db-menu-style">
+                  <button ejs-dropdownbutton id="btnEditMenu" #btnEditMenu cssClass='db-dropdown-menu' 
+              
+                      content="Edit" (select)="menuClick($event)"
+                      (beforeItemRender)="beforeItemRender($event)" 
+                      (beforeOpen)="utilityMethods.arrangeMenuBeforeOpen($event)"
+                      target='.e-contextmenu-wrapper.editMenu'
+                      (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)">
+                  </button>
+              </div>
+              <div class="db-menu-style">
+                  <button ejs-dropdownbutton id="btnDesignMenu" cssClass='db-dropdown-menu' 
+                      content="Design"
+                      (select)="menuClick($event)" 
+                      target='.e-contextmenu-wrapper.designMenu'
+                      (beforeItemRender)="beforeItemRender($event)" 
+                      (beforeOpen)="utilityMethods.arrangeMenuBeforeOpen($event)"
+                      (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)">
+                  </button>
+              </div>
+              <div class="db-menu-style">
+                  <button ejs-dropdownbutton id="btnToolsMenu" cssClass='db-dropdown-menu' 
+                      target='.e-contextmenu-wrapper.toolsMenu' 
+                      content="Tools"
+                      (select)="menuClick($event)" 
+                      (beforeOpen)="utilityMethods.arrangeMenuBeforeOpen($event)" 
+                      (beforeItemRender)="beforeItemRender($event)" 
+                      (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)">
+                  </button>
+              </div>
+              <div class="db-menu-style">
+                  <button ejs-dropdownbutton id="btnSelectMenu" cssClass='db-dropdown-menu' 
+                      [items]='dropDownDataSources.getSelectMenuItems' content="Select"
+                      (select)="menuClick($event)" 
+                      (beforeItemRender)="beforeItemRender($event)" 
+                      (beforeOpen)="utilityMethods.arrangeMenuBeforeOpen($event)"
+                      (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)">
+                  </button>
+              </div>
+              <div class="db-menu-style" >
+                  <button ejs-dropdownbutton id="btnViewMenu" cssClass='db-dropdown-menu' #btnViewMenu 
+                  [items]='dropDownDataSources.getViewMenuItems'
+                      content="View" (select)="menuClick($event)" 
+                      (beforeOpen)="utilityMethods.arrangeMenuBeforeOpen($event)" 
+                      (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)">
+                  </button>
+              </div> 
+          </div> 
+      </div>
+      <div class='db-toolbar-editor'>
+          <div class='db-toolbar-container'>
+              <ejs-toolbar id='toolbarEditor' #toolbarEditor overflowMode='Scrollable' (created)="toolbarCreated()" (clicked)='toolbarEditorClick($event)'>
+                  <e-items>
+                      <e-item prefixIcon="sf-icon-undo tb-icons" tooltipText="Undo" cssClass="tb-item-start tb-item-undo">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-redo tb-icons" tooltipText="Redo" cssClass="tb-item-end tb-item-redo">
+                      </e-item>
+                      <e-item type="Separator">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-pan tb-icons" tooltipText="Pan Tool" cssClass="tb-item-start pan-item">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-pointer tb-icons" tooltipText="Select Tool" cssClass="tb-item-middle tb-item-selected">
+                      </e-item>
+                      <e-item tooltipText="Connector Tool" cssClass="tb-item-middle tb-dropdown-btn-icon">
+                        <ng-template #template>
+                            <button ejs-dropdownbutton id="conTypeBtn" [items]='dropDownDataSources.conTypeItems' iconCss='sf-icon-orthogonal_line'
+                            (select)="utilityMethods.onConnectorSelect($event)">
+                            </button>
+                        </ng-template>
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-text tb-icons" tooltipText="Text Tool" cssClass="tb-item-end">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-group tb-icons" [visible]="false" align ="Center" tooltipText="Group" cssClass="tb-item-start tb-item-align-category">
+                      </e-item>
+                      <e-item type="Separator" align ="Center" [visible]="false">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-align_left tb-icons" [visible]="false" align ="Center" tooltipText="Align Left" cssClass="tb-item-start tb-item-align-category">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-align_center tb-icons" [visible]="false" align ="Center" tooltipText="Align Center" cssClass="tb-item-middle  tb-item-align-category">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-align_right tb-icons" [visible]="false" align ="Center" tooltipText="Align Right" cssClass="tb-item-middle tb-item-align-category">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-align_top tb-icons" [visible]="false" align ="Center" tooltipText="Align Top" cssClass="tb-item-middle tb-item-align-category">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-align_middle tb-icons" [visible]="false" align ="Center" tooltipText="Align Middle" cssClass="tb-item-middle tb-item-align-category">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-align_bottom tb-icons" [visible]="false" align ="Center" tooltipText="Align Bottom" cssClass="tb-item-middle tb-item-align-category">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-distribute_vertical tb-icons" [visible]="false" align ="Center" tooltipText="Distribute Objects Vertically" cssClass="tb-item-middle tb-item-space-category">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-distribute_horizontal tb-icons" [visible]="false" align ="Center" tooltipText="Distribute Objects Horizontally" cssClass="tb-item-end tb-item-space-category">
+                      </e-item>
+                      <e-item type="Separator" align ="Center" [visible]="false">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-bring-forward tb-icons" align ="Center" [visible]="false" tooltipText="Bring Forward" cssClass="tb-item-start tb-item-lock-category">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-bring-to-front tb-icons" align ="Center" [visible]="false" tooltipText="Bring To Front" cssClass="tb-item-middle tb-item-lock-category">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-send-backward tb-icons" align ="Center" [visible]="false" tooltipText="Send Backward" cssClass="tb-item-middle tb-item-lock-category">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-send-to-back tb-icons" align ="Center" [visible]="false" tooltipText="Send To Back" cssClass="tb-item-end tb-item-lock-category">
+                      </e-item>
+                      <e-item type="Separator" align ="Center" [visible]="false">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-lock tb-icons" align ="Center" [visible]="false" tooltipText="Lock" cssClass="tb-item-start tb-item-lock-category">
+                      </e-item>
+                      <e-item prefixIcon="sf-icon-delete tb-icons" align ="Center" [visible]="false" tooltipText="Delete" cssClass="tb-item-end tb-item-lock-category">
+                      </e-item>
+                      <e-item type="Separator" align ="Center" [visible]="false">
+                      </e-item>
+                      <e-item tooltipText="Zoom" align ="Right" cssClass="tb-item-end tb-zoom-dropdown-btn">
+                        <ng-template #template>
+                            <button ejs-dropdownbutton id="btnZoomIncrement" [items]='dropDownDataSources.zoomMenuItems' [content]="zoomContent()" (select)="utilityMethods.zoomChange($event)">
+                            </button>
+                        </ng-template>
+                      </e-item>
+                      <e-item tooltipText="Hide/Show property" align ="Right">
+                        <ng-template #template>
+                            <button ejs-button id="hideProperty" (click)="utilityMethods.hideElements('hide-properties',diagram)" iconCss="sf-icon-properties" isPrimary="true">
+                            </button>
+                        </ng-template>
+                      </e-item>
+                  </e-items>
+              </ejs-toolbar>
+          </div>
+          <!-- <div class="db-toolbar-hide-btn">
+              <button ejs-button id="btnHideToolbar" iconCss='sf-icon-Collapse tb-icons'>
+              </button>
+          </div> -->
+      </div> 
+  </div>
+  <div class='row content'>
+      <div class='sidebar show-overview'>
+          <div class="db-palette-parent">
+              <!-- <div id="symbolpalette"></div> -->
+              <ejs-symbolpalette id="symbolpalette" 
+              [expandMode]='expandMode' [palettes]='palettes' 
+              [enableSearch]="true"
+              width="100%" height="100%" [symbolHeight]=50 [symbolWidth]=50 
+              [symbolMargin]='symbolMargin' [getSymbolInfo]='getSymbolInfo' 
+              [getNodeDefaults]='getSymbolDefaults'>
+            </ejs-symbolpalette>
+          </div>
+      </div>
+      <div class='main-content' role='main'>
+          <div class="db-diagram-container">
+              <div id="diagramContainerDiv" class='db-current-diagram-container'>
+                  <!-- <div id="diagram"></div> -->
+                  <ejs-diagram #diagram id="diagram" [nodes]="nodes" [connectors]="connectors" 
+                  width="100%" height="100%" 
+                  [getConnectorDefaults]='connDefaults' [getNodeDefaults]='nodeDefaults'
+                  [drawingObject]="drawingObject" 
+                  [rulerSettings]="rulerSettings"
+                  [pageSettings]="pageSettings"
+                  [scrollSettings]="scrollSettings"
+                  [snapSettings]="snapSettings"
+                  [contextMenuSettings]="contextMenu"
+                  [commandManager]="commandManger"
+               
+                  (selectionChange)="this.diagramClientSideEvents.selectionChange($event)"
+                  (historyChange)="diagramClientSideEvents.historyChange()"
+                  (onUserHandleMouseDown)="diagramClientSideEvents.userHandleClick($event)"
+                  (contextMenuOpen)="diagramClientSideEvents.contextMenuOpen($event)"
+                  (contextMenuClick)="diagramClientSideEvents.contextMenuClick($event)"
+                  (sizeChange)="diagramClientSideEvents.sizeChange($event)"
+                  (rotateChange)="diagramClientSideEvents.rotateChange($event)"
+                  (positionChange)="diagramClientSideEvents.positionChange($event)"
+                  (created)="diagramCreated()"
+                  (collectionChange)="diagramClientSideEvents.collectionChange($event)"
+                  (dragEnter)="diagramClientSideEvents.dragEnter($event)"
+
+                  >
+                  </ejs-diagram>
+              </div>
+              <!-- <div class="db-more-diagram-options-container">
+                  <div id="pageOptionList">
+                  </div>
+              </div> -->
+          </div>
+          <div class='db-property-editor-container' style="overflow:auto;">
+              <div id="generalDiagramContainer" class="db-general-diagram-prop-container">
+                  <div id='diagramPropertyContainer' class="db-diagram-prop-container">
+                      <div class="row db-prop-header-text">
+                          Page Settings
+                          <button class="close" (click)="utilityMethods.hideElements('hide-properties',diagram)"><i style="width: 20px;height: 20px;font-size:20px" class="sf-icon-close"></i></button>
+                      </div>
+                      <div class="db-prop-separator" style="background-color: #ec1111;margin-bottom: 15px;">
+                    </div>
+                      <div class="row db-prop-row" style="margin-bottom: 10px;">
+                        <span  class="db-prop-text-style">Format</span>
+                          <ejs-dropdownlist #pageSettingsList id="pageSettingsList" [dataSource]='dropDownDataSources.paperList' (change)='diagramPropertyBinding.paperListChange($event)'
+                              [fields]='dropdownListFields' [(value)]='this.selectedItem.pageSettings.paperSize'>
+                          </ejs-dropdownlist>
+                      </div>
+                      <span class="db-prop-text-style" >Orientation</span>
+                      <div class="row db-prop-row" id="pageOrientation">
+                        
+                          <div class="col-xs-6 db-prop-col-style" style="margin-right:0px;">
+                              <button ejs-button id="pagePortrait" isPrimary="true" isToggle="true" style="font-size: 10px;"
+                               cssClass="e-flat e-primary"  iconCss="sf-icon-portrait"  name="pageSettings"
+                                (click)='diagramPropertyBinding.pageOrientationChange($event)'>Portrait</button>
+                          </div>
+                          <div class="col-xs-6 db-prop-col-style">
+                              <button ejs-button id="pageLandscape" isPrimary="true" isToggle="true" style="font-size: 10px;"
+                               cssClass="e-flat e-primary e-active" iconCss="sf-icon-landscape" name="pageSettings"
+                              (click)='diagramPropertyBinding.pageOrientationChange($event)'>LandScape</button>
+                          </div>
+                      </div>
+                      <div class="row db-prop-row" id='pageDimension' style="display:none">
+                          <div class="col-xs-6 db-col-left">
+                              <div class="db-text-container">
+                                  <div class="db-text">
+                                      <span>W</span>
+                                  </div>
+                                  <div class="db-text-input">
+                                      <ejs-numerictextbox id="pageWidth" min="100" format="n0" [(value)]="this.selectedItem.pageSettings.pageWidth" (change)='diagramPropertyBinding.pageDimensionChange($event)'></ejs-numerictextbox>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="col-xs-6 db-col-right">
+                              <div class="db-text-container">
+                                  <div class="db-text">
+                                      <span>H</span>
+                                  </div>
+                                  <div class="db-text-input">
+                                      <ejs-numerictextbox id="pageHeight" min="100" format="n0" [(value)]="this.selectedItem.pageSettings.pageHeight" (change)='diagramPropertyBinding.pageDimensionChange($event)'></ejs-numerictextbox>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="row db-prop-row" style="margin-top: 10px;">
+                          <div class="col-xs-6 db-col-left">
+                              <div class="db-color-container">
+                                  <div class="db-color-input">
+                                      <input type="color" ejs-colorpicker [showButtons]="false"  mode="Palette" width="100%" [value]="this.selectedItem.pageSettings.backgroundColor" (change)='diagramPropertyBinding.pageBackgroundChange1($event)'
+                                      />
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="row db-prop-row">
+                          <ejs-checkbox id='showPageBreaks' label="Page Breaks" [checked]="this.selectedItem.pageSettings.pageBreaks" (change)='diagramPropertyBinding.pageBreaksChange($event)'>
+                          </ejs-checkbox>
+                      </div>
+                  </div>
+                  <div id='nodePropertyContainer' class="db-node-prop-container" style="display:none">
+                      <div class="db-node-behaviour-prop">
+                        <div class="row db-prop-header-text">
+                            Properties
+                            <button class="close" (click)="utilityMethods.hideElements('hide-properties',diagram)"><i style="width: 20px;height: 20px;font-size:20px" class="sf-icon-close"></i></button>
+                        </div>
+                        <div class="db-prop-separator" style="background-color: #b5b5b5;margin-bottom: 15px;">
+                        </div>
+                          <div class="row db-prop-header-text">
+                              Dimensions
+                          </div>
+                          <div class="row db-prop-row">
+                              <div class="col-xs-6 db-col-left" style="width: 97px; padding-right: 5px;">
+                                  <div class="db-text-container">
+                                      <div class="db-text">
+                                          <span>X</span>
+                                      </div>
+                                      <div class="db-text-input">
+                                          <ejs-numerictextbox style="width: 72px;" id="nodeOffsetX" format="n0" [(value)]="this.selectedItem.nodeProperties.offsetX"></ejs-numerictextbox>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="col-xs-6 db-col-right" style="width: 97px;">
+                                  <div class="db-text-container">
+                                      <div class="db-text">
+                                          <span>Y</span>
+                                      </div>
+                                      <div class="db-text-input">
+                                          <ejs-numerictextbox style="width: 72px;" id="nodeOffsetY" format="n0" [(value)]="this.selectedItem.nodeProperties.offsetY"></ejs-numerictextbox>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="row db-prop-row">
+                              <div class="col-xs-6 db-col-left" style="width: 97px; padding-right: 5px;">
+                                  <div class="db-text-container">
+                                      <div class="db-text">
+                                          <span>W</span>
+                                      </div>
+                                      <div class="db-text-input">
+                                          <ejs-numerictextbox style="width: 72px;" id="nodeWidth"  format="n0" [(value)]="this.selectedItem.nodeProperties.width"></ejs-numerictextbox>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="col-xs-6 db-col-right" style="width: 97px;">
+                                  <div class="db-text-container">
+                                      <div class="db-text">
+                                          <span>H</span>
+                                      </div>
+                                      <div class="db-text-input">
+                                          <ejs-numerictextbox style="width: 72px;" id="nodeHeight"  format="n0" [(value)]="this.selectedItem.nodeProperties.height"></ejs-numerictextbox>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="col-xs-2 db-col-left" style="width: 20px; padding-left: 7px;">
+                                    <button ejs-button style="height: 26px;width: 26px; background-color: #ffff;" 
+                                    id='aspectRatioBtn' (click)="utilityMethods.aspectClick(selectedItem)"
+                                    iconCss="sf-icon-unlock" isToggle="true" cssClass='e-flat'  ></button>
+                              </div>
+                          </div>
+                          <div class="row db-prop-row">
+                              <div class="col-xs-6 db-col-left" style="width: 97px;">
+                                  <div class="db-text-container">
+                                      <div class="db-text">
+                                          <button ejs-button style="margin: -5px 0px 0px 0px;" iconCss='sf-icon-rotate tb-icons'>
+                                          </button>
+                                      </div>
+                                      <div class="db-text-input">
+                                          <ejs-numerictextbox id="nodeRotateAngle" style="width: 72px;" format="n0" [(value)]="this.selectedItem.nodeProperties.rotateAngle"></ejs-numerictextbox>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="db-prop-separator" style="background-color: #b5b5b5;margin-bottom: 15px;">
+                        </div>
+                        <div class="row db-prop-row">
+                            <div class="col-xs-6 db-col-left">
+                                <button ejs-button (click)="insertHyperlink()" cssClass="e-outline" isPrimary="true" style="font-size: 10px;"  id="insertBtn">Insert link</button>
+                            </div>
+                        </div>
+                        <div class="db-prop-separator" style="background-color: #b5b5b5;">
+                        </div>
+                      </div>
+                      <div id='nodeStyleProperties' class="db-node-style-prop">
+                          <div class="row db-background-style">
+                            <div class="col-xs-6 db-col-right" style="margin-bottom: 3px;">
+                                <span  class="db-prop-text-style">Background Type</span>
+                            </div>
+                            <div class="row db-prop-row">
+                                <div class="col-xs-12 db-col-left">
+                                    <ejs-dropdownlist type="text" [index]="0" (select)="diagramPropertyBinding.backgroundTypeSelect($event)" [dataSource]="dropDownDataSources.backgroundTypes" id='backgroundTypeDropdown'></ejs-dropdownlist>
+                                </div>
+                            </div>
+                            <div id='gradientStyle' class="row db-prop-row db-gradient-style-hide">
+                                <div class="col-xs-6 db-col-left" style="width: 87px;">
+                                    <div class="db-color-container">
+                                        <div class="db-color-input">
+                                            <input ejs-colorpicker [showButtons]="false" [(value)]="selectedItem.nodeProperties.fillColor"  mode="Palette" id="nodeFillColor" type="color">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-2 db-col-center">
+                                    <button ejs-dropdownbutton iconCss='sf-icon-gradient-alignment' style="height: 26px;width: 48px;" (select)="diagramPropertyBinding.gradientDirectionChange($event)" [items]="dropDownDataSources.gradientDirections" id="gradientDirection"></button>
+                                </div>
+                                <div class="col-xs-4 db-col-right" style="margin-left: 20px;">
+                                    <div class="db-color-container">
+                                        <div class="db-color-input">
+                                                <input ejs-colorpicker [(value)]="selectedItem.nodeProperties.gradientColor" [showButtons]="false"  mode="Palette" id="nodeGradientColor" type="color">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                          <div class="row db-border-style">
+                            <div class="row db-prop-header-text db-border-style-header">
+                                Border/Line Styles
+                                <button class="close" (click)="utilityMethods.hideElements('hide-properties',diagram)"><i style="width: 20px;height: 20px;font-size:20px" class="sf-icon-close"></i></button>
+                            </div>
+                            <div class="db-prop-separator" style="background-color: #b5b5b5;margin-bottom: 15px;">
+                            </div>
+                            <div class="row db-prop-row">
+                                <div class="col-xs-6 db-col-right" >
+                                    <span class="db-prop-text-style">Border Type</span>
+                                </div>
+                                <div class="col-xs-2 db-col-left" style="margin-left: -6px;">
+                                    <span class="db-prop-text-style">Color</span>
+                                </div>
+                                <div class="col-xs-2 db-col-center" style="margin-left: 6px;">
+                                    <span class="db-prop-text-style">Thickness</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6 db-col-right" style="width: 90px;">
+                                    <ejs-dropdownlist id="nodeBorderStyle" #nodeBorderStyle [(value)]='selectedItem.nodeProperties.strokeStyle' 
+                                            popupWidth='160px' [fields]='dropdownListFields'
+                                            index="0" 
+                                            [itemTemplate]='strokeStyleItemTemplate'  [valueTemplate]='strokeStyleTemplate'
+                                            [dataSource]='dropDownDataSources.borderStyles'
+                                            >
+                                            <!-- <ng-template #itemTemplate let-data>
+                                                    <div class="db-ddl-template-style">
+                                                        <span class={{data.className}}></span>
+                                                    </div>
+                                                </ng-template>
+                                                <ng-template #valueTemplate let-data>
+                                                    <div class="db-ddl-template-style">
+                                                        <span class={{data.className}}></span>
+                                                    </div>
+                                            </ng-template> -->
+                                        </ejs-dropdownlist>
+                                </div>
+                                <div class="col-xs-2 db-col-center" >
+                                    <div class="db-color-container" style="width: 55px;margin-left: 0px;">
+                                        <div class="db-color-input">
+                                                <input ejs-colorpicker [(value)]="selectedItem.nodeProperties.strokeColor"  [showButtons]="false"  mode="Palette"  id="nodeStrokeColor" type="color">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-4 db-col-center" style="width: 70px;margin-left: 25px;">
+                                    <div class="db-text-container">
+                                    <div class="db-text-input">
+                                    <ejs-numerictextbox [(value)]="selectedItem.nodeProperties.strokeWidth" 
+                                    style="width: 64px;" min="1" step="0.5" id="nodeStrokeWidth" type="text" ></ejs-numerictextbox>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row db-prop-row">
+                                <div class="col-xs-2 db-col-right db-prop-text-style" style="margin-right: 15px;padding-top: 6px">
+                                    <span class="db-prop-text-style">Opacity</span>
+                                </div>
+                                <div class="col-xs-8 db-col-left" style="width: 130px;padding-right: 10px;">
+                                    <ejs-slider id='nodeOpacitySlider' [(value)]='selectedItem.nodeProperties.opacity'
+                                     min='0' max='100' step='10' type='MinRange'></ejs-slider>
+                                </div>
+                                <div class="col-xs-2 db-col-right">
+                                    <input  [value]='selectedItem.nodeProperties.opacityText' type="text" readOnly="true" class="db-readonly-input" />
+                                </div>
+                            </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div id='connectorPropertyContainer' class="db-connector-prop-container" style="display:none">
+                    <div class="row db-prop-header-text">
+                        Connector Properties
+                        <button class="close" (click)="utilityMethods.hideElements('hide-properties',diagram)"><i style="width: 20px;height: 20px;font-size:20px" class="sf-icon-close"></i></button>
+                    </div>
+                    <div class="db-prop-separator" style="background-color: #b5b5b5;margin-bottom: 15px;">
+                    </div>
+                    <div class="row db-prop-row">
+                        <div class="col-xs-6 db-col-left db-prop-text-style">
+                            <span class="db-prop-text-style">Connector Type</span>
+                        </div>
+                        <div class="col-xs-4 db-col-left db-prop-text-style" style="margin-left: 19px;" >
+                            <span class="db-prop-text-style">Color</span>
+                        </div>
+                       </div>
+                      <div class="row">
+                          <div class="col-xs-6 db-col-left">
+                              <ejs-dropdownlist [(value)]="selectedItem.connectorProperties.lineType" [dataSource]='dropDownDataSources.lineTypes' [fields]='dropdownListFields'>
+                              </ejs-dropdownlist>
+                          </div>
+                          <div class="col-xs-4 db-col-left">
+                            <div class="db-color-container"  style="width: 77px;margin-left: 18px;">
+                                <div class="db-color-input">
+                                    <input id="lineColor"  ejs-colorpicker [showButtons]="false"  mode="Palette" type="color" [(value)]="selectedItem.connectorProperties.lineColor" />
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="row db-prop-row">
+                        <div class="col-xs-6 db-col-left db-prop-text-style">
+                            <span class="db-prop-text-style">Stroke Style</span>
+                        </div>
+                        <div class="col-xs-4 db-col-right db-prop-text-style" style="margin-left: 18px;">
+                            <span class="db-prop-text-style">Thickness</span>
+                        </div>
+                      </div>
+                      <div class="row">
+                          <div class="col-xs-6 db-col-left" >
+                              <ejs-dropdownlist id="lineStyle" #lineStyle [(value)]='selectedItem.connectorProperties.lineStyle'
+                               [dataSource]='dropDownDataSources.lineStyles' popupWidth="160px" index="0"
+                                  [fields]='dropdownListFields' 
+                                  [itemTemplate]='strokeStyleItemTemplate' [valueTemplate]='strokeStyleTemplate'>
+                                  <!-- <ng-template #itemTemplate let-data>
+                                      <div class="db-ddl-template-style">
+                                          <span class={{data.className}}></span>
+                                      </div>
+                                  </ng-template>
+                                  <ng-template #valueTemplate let-data>
+                                      <div class="db-ddl-template-style">
+                                          <span class={{data.className}}></span>
+                                      </div>
+                                  </ng-template> -->
+                              </ejs-dropdownlist>
+                          </div>
+                          <div class="col-xs-6 db-col-right">
+                            <div class="db-text-container" style="width: 77px; margin-left: 20px;">
+                                <div class="db-text-input">
+                              <ejs-numerictextbox min="0.5" style="width: 74px;" step="0.5" [(value)]="selectedItem.connectorProperties.lineWidth"></ejs-numerictextbox>
+                                </div>
+                                </div>
+                            </div>
+                      </div>
+                      <div class="row db-prop-row">
+                        <div class="col-xs-6 db-col-left db-prop-text-style">
+                            <span class="db-prop-text-style">Start Arrow</span>
+                        </div>
+                        <div class="col-xs-4 db-col-right db-prop-text-style" style="margin-left: 19px;">
+                            <span class="db-prop-text-style">Size</span>
+                        </div>
+                    </div>
+                      <div class="row">
+                          <div class="col-xs-6 db-col-left">
+                              <ejs-dropdownlist [(value)]="selectedItem.connectorProperties.sourceType" [dataSource]='dropDownDataSources.decoratorList'
+                                  [fields]='dropdownListFields'>
+                              </ejs-dropdownlist>
+                          </div>
+                          <div class="col-xs-6 db-col-right">
+                            <div class="db-text-container" style="width: 77px; margin-left: 20px;">
+                                <div class="db-text-input">
+                                 <ejs-numerictextbox style="width: 74px;" min="1" step="1" [(value)]="selectedItem.connectorProperties.sourceSize"></ejs-numerictextbox> 
+                                </div>
+                            </div>
+                          </div>
+                      </div>
+                      <div class="row db-prop-row">
+                          <div class="col-xs-8 db-col-left db-prop-text-style">
+                              <span class="db-prop-text-style">End Arrow</span>
+                          </div>
+                          <div class="col-xs-4 db-col-right db-prop-text-style">
+                              <span class="db-prop-text-style">Size</span>
+                          </div>
+                      </div>
+                      <div class="row">
+                          <div class="col-xs-6 db-col-left">
+                              <ejs-dropdownlist [(value)]="selectedItem.connectorProperties.targetType" [dataSource]='dropDownDataSources.decoratorList'
+                                  [fields]='dropdownListFields'>
+                              </ejs-dropdownlist>
+                          </div>
+                          <div class="col-xs-6 db-col-right">
+                                    <div class="db-text-container" style="width: 77px; margin-left: 20px;">
+                                        <div class="db-text-input">
+                                            <ejs-numerictextbox min="1" style="width: 74px;" step="1" [(value)]="selectedItem.connectorProperties.targetSize"></ejs-numerictextbox>
+                                        </div>
+                                    </div>
+                            </div>
+                      </div>
+                      <div class="row db-prop-row">
+                          <div class="col-xs-6 db-col-left" style="margin-top:5px">
+                              <ejs-checkbox id='lineJump' label="Bridging" [(checked)]="selectedItem.connectorProperties.lineJump"></ejs-checkbox>
+                          </div>
+                          <div class="col-xs-6 db-col-right" id="lineJumpSizeDiv" style="display:none">
+                            <div class="db-text-container" style="width: 77px; margin-left: 20px;">
+                                <div class="db-text-input">
+                                  <ejs-numerictextbox style="width: 74px;"  min="1" step="1" [(value)]="selectedItem.connectorProperties.lineJumpSize"></ejs-numerictextbox>
+                                </div>
+                             </div>
+                         </div>
+                      </div>
+                      <div class="row db-prop-row">
+                          <div class="col-xs-2 db-col-right db-prop-text-style" style="padding-top: 6px">
+                              <span class="db-prop-text-style">Opacity</span>
+                          </div>
+                          <div class="col-xs-8 db-col-left" style="padding-right:15px; padding-left: 15px;">
+                              <ejs-slider id='default' [(value)]='selectedItem.connectorProperties.opacity' min='0' max='100' step='10' type='MinRange'>
+                              </ejs-slider>
+                          </div>
+                          <div class="col-xs-2 db-col-right">
+                              <input type="text" [value]='selectedItem.connectorProperties.opacityText' readonly="true" class="db-readonly-input" />
+                          </div>
+                      </div>
+                  </div>
+                  <div id='textPropertyContainer' class="db-text-prop-container" style="display:none">
+                    <div class="db-prop-separator" style="background-color: #b5b5b5;">
+                    </div>
+                    <div class="col-xs-8 db-col-left db-prop-text-style">
+                        <span class="db-prop-text-style">Text</span>
+                    </div>
+                    <div class="col-xs-4 db-col-left db-prop-text-style">
+                        <span class="db-prop-text-style">Size</span>
+                    </div>
+                      <div class="row db-prop-row">
+                          <div class="col-xs-8 db-col-left" style="width: 145px;">
+                              <ejs-dropdownlist #fontFamily height='34px' [dataSource]='dropDownDataSources.fontFamilyList' [(value)]='this.selectedItem.textProperties.fontFamily'
+                                  [fields]='dropdownListFields' >
+                              </ejs-dropdownlist>
+                          </div>
+                          <div class="col-xs-4 db-col-right">
+                            <div class="db-text-container">
+                              <div class="db-text-input">
+                                <ejs-numerictextbox style="width: 73px;" min="1" step="1" [(value)]="selectedItem.textProperties.fontSize"></ejs-numerictextbox>
+                              </div>
+                            </div>
+                          </div>
+                      </div>
+                      <div class="row db-prop-row">
+                        <div class="col-xs-6 db-col-left" id="textPositionDiv" style="width: 135px;">
+                                <ejs-dropdownlist #ddlTextPosition 
+                                [dataSource]="selectedItem.textProperties.textPositionDataSource" 
+                                type="text" id='ddlTextPosition' [value]='selectedItem.textProperties.textPosition'
+                                [fields]='dropdownListFields'
+                                (change)='diagramPropertyBinding.textPositionChange($event)'
+                                ></ejs-dropdownlist>
+                        </div>
+                        <div class="col-xs-4 db-col-right" id="textColorDiv" style="width: 80px;margin-left:4px">
+                            <div class="db-color-container">
+                                <div class="db-color-input">
+                                        <input ejs-colorpicker [(value)]="selectedItem.textProperties.fontColor" [showButtons]="false"  mode="Palette"  id="textColor" type="color">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row db-prop-row" style="margin-top: 10px;">
+                        <div class="col-xs-6 db-col-left">
+                            <ejs-toolbar id='toolbarTextStyle' overflowMode='Scrollable' (clicked)="diagramPropertyBinding.toolbarTextStyleChange($event)">
+                                <e-items>
+                                    <e-item prefixIcon="sf-icon-bold tb-icons" tooltipText="Bold" cssClass="tb-item-start">
+                                    </e-item>
+                                    <e-item prefixIcon="sf-icon-italic tb-icons" tooltipText="Italic" cssClass="tb-item-middle">
+                                    </e-item>
+                                    <e-item prefixIcon="sf-icon-underline tb-icons" tooltipText="Underline" cssClass="tb-item-end">
+                                    </e-item>
+                                </e-items>
+                            </ejs-toolbar>
+                        </div>
+                        <div class="col-xs-6 db-col-right">
+                            <ejs-toolbar id='toolbarTextSubAlignment' overflowMode='Scrollable' (clicked)="diagramPropertyBinding.toolbarTextSubAlignChange($event)">
+                                <e-items>
+                                    <e-item prefixIcon="sf-icon-align-left tb-icons" tooltipText="Align Text Left" cssClass="tb-item-start">
+                                    </e-item>
+                                    <e-item prefixIcon="sf-icon-align-center tb-icons" tooltipText="Align Text Center" cssClass="tb-item-middle">
+                                    </e-item>
+                                    <e-item prefixIcon="sf-icon-align-right tb-icons" tooltipText="Align Text Right" cssClass="tb-item-end">
+                                    </e-item>
+                                </e-items>
+                            </ejs-toolbar>
+                        </div>
+                    </div>
+                    <div class="row db-prop-row" id='toolbarTextAlignmentDiv'>
+                        <div class="col-xs-6 db-col-left">
+                            <ejs-toolbar id='toolbarTextAlignmentLeft' overflowMode='Scrollable' (clicked)="diagramPropertyBinding.toolbarTextAlignChange($event)">
+                                <e-items>
+                                    <e-item prefixIcon="sf-icon-align-text-left tb-icons" tooltipText="Align Right" cssClass="tb-item-start">
+                                    </e-item>
+                                    <e-item prefixIcon="sf-icon-align-text-horizontal-center tb-icons" tooltipText="Align Center" cssClass="tb-item-middle">
+                                    </e-item>
+                                    <e-item prefixIcon="sf-icon-align-text-rignt tb-icons" tooltipText="Align Left" cssClass="tb-item-end">
+                                    </e-item>
+                                </e-items>
+                            </ejs-toolbar>
+                        </div>
+                        <div class="col-xs-6 db-col-right">
+                            <ejs-toolbar id='toolbarTextAlignmentTop' overflowMode='Scrollable' (clicked)="diagramPropertyBinding.toolbarTextAlignChange($event)">
+                                <e-items>
+                                    <e-item prefixIcon="sf-icon-align-text-top tb-icons" tooltipText="Align Bottom" cssClass="tb-item-start">
+                                    </e-item>
+                                    <e-item prefixIcon="sf-icon-align-text-vertical-center tb-icons" tooltipText="Align Middle" cssClass="tb-item-middle">
+                                    </e-item>
+                                    <e-item prefixIcon="sf-icon-align-text-bottom tb-icons" tooltipText="Align Top" cssClass="tb-item-end">
+                                    </e-item>
+                                </e-items>
+                            </ejs-toolbar>
+                        </div>
+                    </div>
+                    <div class="row db-prop-row">
+                        <div class="col-xs-2 db-col-right db-prop-text-style" style="margin-right: 15px;padding-top: 6px">
+                            <span class="db-prop-text-style">Opacity</span>
+                        </div>
+                        <div class="col-xs-8 db-col-left" style="width: 130px;padding-right: 10px;">
+                            <ejs-slider id="opacityTextSlider" [(value)]='selectedItem.textProperties.opacity' min='0' max='100' step='10' type='MinRange'>
+                            </ejs-slider>
+                        </div>
+                        <div class="col-xs-2 db-col-right">
+                            <input id='textOpacityText' type="text" [value]='selectedItem.textProperties.opacityText' class="db-readonly-input" readOnly="true"/>
+                        </div>
+                    </div>
+                    <div class="db-prop-separator" style="background-color: #b5b5b5;">
+                    </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+<ejs-dialog id="exportDialog" #exportDialog width='400px' header='Export Diagram' [target]='dlgTarget' isModal='true' [animationSettings]='dialogAnimationSettings'
+    [buttons]='exportingButtons' [visible]='dialogVisibility' showCloseIcon='true'>
+    <ng-template #content>
+        <div id="exportDialogContent">
+            <div class="row">
+                <div class="row">
+                    File Name
+                </div>
+                <div class="row db-dialog-child-prop-row">
+                    <input type="text" id="exportfileName" [value]="utilityMethods.fileName()">
+                </div>
+            </div>
+            <div class="row db-dialog-prop-row">
+                <div class="col-xs-6 db-col-left">
+                    <div class="row">
+                        Format
+                    </div>
+                    <div class="row db-dialog-child-prop-row">
+                        <ejs-dropdownlist id="exportFormat" [(value)]="this.selectedItem.exportSettings.format" [dataSource]='dropDownDataSources.fileFormats'
+                            [fields]='dropdownListFields'>
+                        </ejs-dropdownlist>
+                    </div>
+                </div>
+                <div class="col-xs-6 db-col-right">
+                    <div class="row">
+                        Region
+                    </div>
+                    <div class="row db-dialog-child-prop-row">
+                        <ejs-dropdownlist id="exportRegion" [(value)]="this.selectedItem.exportSettings.region" [dataSource]='dropDownDataSources.diagramRegions'
+                            [fields]='dropdownListFields'>
+                        </ejs-dropdownlist>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</ejs-dialog>
+
+<ejs-dialog id="printDialog" #printDialog width='335px' header='Print Diagram' [target]='dlgTarget' isModal='true' [animationSettings]='dialogAnimationSettings'
+    [buttons]='printingButtons' [visible]='dialogVisibility' showCloseIcon='true'>
+    <ng-template #content>
+        <div id="printDialogContent">
+            <div class="row">
+                <div class="row">
+                    Region
+                </div>
+                <div class="row db-dialog-child-prop-row">
+                    <ejs-dropdownlist [(value)]="this.selectedItem.printSettings.region" [dataSource]='dropDownDataSources.diagramRegions' [fields]='dropdownListFields'>
+                    </ejs-dropdownlist>
+                </div>
+            </div>
+            <div class="row db-dialog-prop-row">
+                <div class="row">
+                    Print Settings
+                </div>
+                <div class="row db-dialog-child-prop-row">
+                    <ejs-dropdownlist [dataSource]='dropDownDataSources.paperList' [fields]='dropdownListFields' [(value)]='this.selectedItem.printSettings.paperSize'>
+                    </ejs-dropdownlist>
+                </div>
+            </div>
+            <div id="printCustomSize" class="row db-dialog-prop-row" style="display:none; height: 28px;">
+                <div class="col-xs-6 db-col-left">
+                    <div class="db-text-container">
+                        <div class="db-text">
+                            <span>W</span>
+                        </div>
+                        <div class="db-text-input">
+                            <ejs-numerictextbox id="printPageWidth" min="100" step="1" format="n0" [(value)]="selectedItem.printSettings.pageWidth"></ejs-numerictextbox>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 db-col-right">
+                    <div class="db-text-container">
+                        <div class="db-text">
+                            <span>H</span>
+                        </div>
+                        <div class="db-text-input">
+                            <ejs-numerictextbox id="printPageHeight" min="100" step="1" format="n0" [(value)]="selectedItem.printSettings.pageHeight"></ejs-numerictextbox>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="printOrientation" class="row db-dialog-prop-row" style="height: 28px; padding: 5px 0px;">
+                <div class="col-xs-3 db-prop-col-style" style="margin-right: 8px;">
+                    <ejs-radiobutton id='printPortrait' label="Portrait" name="printSettings" [checked]="true" >
+                    </ejs-radiobutton>
+                </div>
+                <div class="col-xs-3 db-prop-col-style">
+                    <ejs-radiobutton id='printLandscape' label="Landscape" name="printSettings" >
+                    </ejs-radiobutton>
+                </div>
+            </div>
+            <div class="row db-dialog-prop-row" style="margin-top: 16px">
+                <ejs-checkbox id='printMultiplePage' label="Scale to fit 1 page" [(checked)]="selectedItem.printSettings.multiplePage"></ejs-checkbox>
+            </div>
+        </div>
+    </ng-template>
+</ejs-dialog>
+<ejs-dialog id="hyperlinkDialog" #hyperlinkDialog width='400px' header='Insert Link' [target]='dlgTarget' isModal='true'
+    [animationSettings]='dialogAnimationSettings' [visible]='dialogVisibility' [buttons]='hyperlinkButtons' showCloseIcon='true'>
+    <ng-template #content>
+        <div id="hyperlinkDialogContent">
+            <div class="row">
+                <div class="row">Enter URL</div>
+                <div class="row db-dialog-child-prop-row">
+                    <input type="text" id="hyperlink">
+                </div>
+            </div>
+            <div class="row db-dialog-prop-row">
+                <div class="row">Link Text (Optional)</div>
+                <div class="row db-dialog-child-prop-row">
+                    <input type="text" id="hyperlinkText">
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</ejs-dialog>
