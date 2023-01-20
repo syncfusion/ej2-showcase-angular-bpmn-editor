@@ -250,9 +250,9 @@
               <ejs-symbolpalette id="symbolpalette" 
               [expandMode]='expandMode' [palettes]='palettes' 
               [enableSearch]="true"
-              width="100%" height="100%" [symbolHeight]=50 [symbolWidth]=50 
+              width="100%" height="100%" 
               [symbolMargin]='symbolMargin' [getSymbolInfo]='getSymbolInfo' 
-              [getNodeDefaults]='getSymbolDefaults'>
+             >
             </ejs-symbolpalette>
           </div>
       </div>
@@ -353,7 +353,7 @@
                           </div>
                       </div>
                       <div class="row db-prop-row">
-                          <ejs-checkbox id='showPageBreaks' label="Page Breaks" [checked]="this.selectedItem.pageSettings.pageBreaks" (change)='diagramPropertyBinding.pageBreaksChange($event)'>
+                          <ejs-checkbox id='showPageBreaks' #showPageBreaks label="Page Breaks" [checked]="this.selectedItem.pageSettings.pageBreaks" (change)='diagramPropertyBinding.pageBreaksChange($event)'>
                           </ejs-checkbox>
                       </div>
                   </div>
