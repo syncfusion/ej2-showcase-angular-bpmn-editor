@@ -212,10 +212,10 @@ textarea.e-input,
 
 .e-btn:focus,
 .e-css.e-btn:focus {
-  background-color: rgba(0, 0, 0, 0.18);
+  /* background-color: rgba(0, 0, 0, 0.18); */
   border-color: transparent;
   box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
-  color: rgba(0, 0, 0, 0.87);
+  /* color: rgba(0, 0, 0, 0.87); */
   outline: #fafafa 0 solid;
   outline-offset: 0;
 }
