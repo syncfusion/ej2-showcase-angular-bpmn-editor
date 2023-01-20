@@ -393,7 +393,7 @@ public expandMode: ExpandMode = 'Multiple';
     },
     {
         id:'Message Flow',
-        sourcePoint: { x: 0, y: 0 }, targetPoint: { x: 30, y: 25 },type: 'Straight',
+        sourcePoint: { x: 0, y: 0 }, targetPoint: { x: 30, y: 23 },type: 'Straight',
         sourceDecorator:{shape:'None'},targetDecorator:{shape:'Arrow',style:{fill:'white'}},
         style:{strokeDashArray:'4 4'}
     },
@@ -402,14 +402,15 @@ public expandMode: ExpandMode = 'Multiple';
         height: 25,shape: { type: 'Bpmn', shape: 'Message',},
       },
     {
-        id: 'Data_Object', width: 30, height: 35, 
-        shape: { type: 'Bpmn', shape: 'DataObject', dataObject: { collection: false, type: 'None' } },
-    },
-    {
         id:'Data_Source', width:30,height:28, shape: {
             type: 'Bpmn', shape: 'DataSource',  
         }
     },
+    {
+        id: 'Data_Object', width: 30, height: 35, 
+        shape: { type: 'Bpmn', shape: 'DataObject', dataObject: { collection: false, type: 'None' } },
+    },
+   
 ];
 
 public palettes: PaletteModel[] = [
@@ -423,80 +424,9 @@ public palettes: PaletteModel[] = [
 ];
 
 public getSymbolInfo(symbol: NodeModel): SymbolInfo {
-  return { fit: true };
+    return {  tooltip: symbol.id.replace('_',' ')};
 }
 
-public getSymbolDefaults(symbol: NodeModel): void {
-  // symbol.style.strokeColor = '#757575';
-  if (symbol.id === 'Terminator' || symbol.id === 'Process') {
-    symbol.width = 80;
-    symbol.height = 40;
-  } else if (
-    symbol.id === 'Decision' ||
-    symbol.id === 'Document' ||
-    symbol.id === 'PreDefinedProcess' ||
-    symbol.id === 'PaperTap' ||
-    symbol.id === 'DirectData' ||
-    symbol.id === 'MultiDocument' ||
-    symbol.id === 'Data'
-  ) {
-    symbol.width = 50;
-    symbol.height = 40;
-  } else {
-    symbol.width = 50;
-    symbol.height = 50;
-  }
-}
-
-// public scrollChange(args:IScrollChangeEventArgs){
-//   scrollChange(args)
-// }
-
-  private generateDiagram(): void {
-    // let diagram: Diagram = new Diagram({
-    //     width: '100%', height: '100%',
-    //     nodes:this.nodes,connectors:this.connectors,
-    //     drawingObject:{type:'Orthogonal'},
-    //     rulerSettings:{showRulers:true},
-    //     snapSettings: {
-    //         constraints: (SnapConstraints.All)
-    //     },
-        
-    //     pageSettings: {
-    //         background: { color: '#ffffff' }, width: 816, height: 1056, multiplePage: true, margin: { left: 5, top: 5 },
-    //         orientation: 'Landscape'
-    //     },
-    //     scrollSettings: { canAutoScroll: true, scrollLimit: 'Infinity', minZoom: 0.25, maxZoom: 30 },
-    //     selectedItems: { constraints: SelectorConstraints.All & ~SelectorConstraints.ToolTip },
-    //     getNodeDefaults: this.nodeDefaults,
-    //     getConnectorDefaults: this.connDefaults,
-    //     onUserHandleMouseDown:this.diagramClientSideEvents.userHandleClick.bind(this.diagramClientSideEvents),
-    //     selectionChange: this.diagramClientSideEvents.selectionChange.bind(this.diagramClientSideEvents),
-    //     historyChange: this.diagramClientSideEvents.historyChange.bind(this.diagramClientSideEvents),
-
-    // });
-    // diagram.appendTo('#diagram');
-    // this.selectedItem.diagram = diagram;
-    //this.selectedItem.toolbarObj = (document.getElementById('toolbarEditor') as any).ej2_instances[0];
-}
-
-private generatePalette(): void {
-//   let palette: SymbolPalette = new SymbolPalette({
-//     expandMode: 'Multiple',
-//     palettes: [
-//         //{ id: 'scratchpad', expanded: true, symbols: [], iconCss: 'ej-icon-New scratch-pad', title: 'Scratchpad' },
-//         { id: 'flow', expanded: true, symbols: this.bpmnShapes, title: 'Bpmn Shapes' },
-//         { id: 'basic', expanded: false, symbols: this.connectorSymbols, title: 'Connectors' },
-//     ],
-//     width: '100%', height: '100%', symbolHeight: 50, symbolWidth: 50,
-//     symbolPreview: { height: 100, width: 100 },
-//     symbolMargin: { left: 12, right: 12, top: 12, bottom: 12 },
-//     getSymbolInfo: (symbol: NodeModel): SymbolInfo => {
-//         return { fit: true };
-//     }
-// });
-// palette.appendTo('#symbolpalette');
-}
 public dropdownListFields: any = { text: 'text', value: 'value' };
 
 public animationSettings: MenuAnimationSettingsModel = { effect: 'None' };
