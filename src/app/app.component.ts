@@ -77,9 +77,7 @@ export class AppComponent implements AfterViewInit{
     9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75
   ];
 public rulerSettings: RulerSettingsModel = {showRulers:true};
-public snapSettings: SnapSettingsModel = { constraints: (SnapConstraints.All),
-    horizontalGridlines: { lineColor: '#e0e0e0', lineIntervals: this.interval },
-       verticalGridlines: { lineColor: '#e0e0e0', lineIntervals: this.interval } };
+public snapSettings: SnapSettingsModel = { constraints: (SnapConstraints.All),};
 public pageSettings: PageSettingsModel = {
   background: { color: 'White' }, width: 816, height: 1460, multiplePage: false, margin: { left: 5, top: 5 },
   orientation: 'Landscape'
@@ -1162,17 +1160,10 @@ public enableMenuItems(itemText: string, diagram: Diagram): boolean {
   }
 
 
-//   public snapSettings: SnapSettingsModel = {
-//     horizontalGridlines: { lineColor: '#e0e0e0', lineIntervals: this.interval },
-//     verticalGridlines: { lineColor: '#e0e0e0', lineIntervals: this.interval }
-//   };
-
   public zoomMenuItems: ItemModel[] = [
     { text: '400%' }, { text: '300%' }, { text: '200%' }, { text: '150%' },
     { text: '100%' }, { text: '75%' }, { text: '50%' }, { text: '25%' }, { separator: true },
     { text: 'Fit To Screen' }
-    // { separator: true },
-    // { text: 'Custom' },
 ];
 //   public dragEnter(args: IDragEnterEventArgs): void {
 //     let obj: NodeModel = args.element as NodeModel;
