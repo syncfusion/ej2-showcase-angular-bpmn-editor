@@ -1,34 +1,34 @@
 # ej2-angular-bpmn-editor
 The BPMN shapes help us to represent internal business processes in a graphical notation. They enable you to communicate procedures in a standard manner. These shapes are popular and intuitive graphics that can be easily understood by all business stakeholders, including business users, business analysts, software developers, and data architects. 
+
 # MyApp
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.9.
 
-## Required Package
+## Pre-required Package
 
-Angular CLI: 14.2.9
-Node-version: 14.17.3
-Package Manager: npm 6.14.13
+Install Angular CLI - 14.2.9 using the below command 
+```
+npm i @angular/cli@14.2.9
+```
 
-## Development server
+Install Node version - 14.17.3 from https://nodejs.org/en/download/ 
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Installing
 
-## Code scaffolding
+Before installation check `@syncfusion:registry=http://nexus.syncfusion.com/repository/ej2-production/` is available in npmrc file. Then use the below command to install all dependent packages.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+```
+npm install
+```
 
 ## Build
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
+## To Run the application
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
 ## Further help
 
