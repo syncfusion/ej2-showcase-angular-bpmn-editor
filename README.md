@@ -1,22 +1,18 @@
 # ej2-angular-bpmn-editor
 The BPMN shapes help us to represent internal business processes in a graphical notation. They enable you to communicate procedures in a standard manner. These shapes are popular and intuitive graphics that can be easily understood by all business stakeholders, including business users, business analysts, software developers, and data architects. 
 
-# MyApp
+## Pre-Requests
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.9.
-
-## Pre-required Package
+Install Node version - 14.17.3 from https://nodejs.org/en/download/ 
 
 Install Angular CLI - 14.2.9 using the below command 
 ```
 npm i @angular/cli@14.2.9
 ```
 
-Install Node version - 14.17.3 from https://nodejs.org/en/download/ 
+## To Install all packages
 
-## Installing
-
-Before installation check `@syncfusion:registry=http://nexus.syncfusion.com/repository/ej2-production/` is available in npmrc file. Then use the below command to install all dependent packages.
+Use the below command to install all dependent packages.
 
 ```
 npm install
