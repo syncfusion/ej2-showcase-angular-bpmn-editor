@@ -128,7 +128,6 @@ export class DropDownDataSources {
     { text: 'Snap To Object',iconCss : 'sf-icon-check-tick'},
     { text: 'Show Ruler',iconCss: 'sf-icon-check-tick'},
     { text: 'Show Page Breaks',iconCss: ''},
-    { text: 'Show Multiple page',iconCss: ''},
     { separator: true },
     { text: 'Fit To Width'},
     { text: 'Fit To Page'},
