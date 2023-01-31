@@ -302,7 +302,7 @@ export class UtilityMethods {
     public viewSelectionChange(diagram:Diagram){
     var items = (document.getElementById('btnViewMenu') as any).ej2_instances[0].items;
     items[4].iconCss = diagram.pageSettings.showPageBreaks ? 'sf-icon-check-tick':'';
-    items[5].iconCss = diagram.pageSettings.multiplePage ? 'sf-icon-check-tick':'';
+    // items[5].iconCss = diagram.pageSettings.multiplePage ? 'sf-icon-check-tick':'';
     //let pageBreakChecks = (document.getElementById('showPageBreaks') as any);
     // pageBreakChecks.ownerDocument.activeElement.ej2_instances[0].checked = diagram.pageSettings.showPageBreaks ? true:false;
     //pageBgColor.value = UtilityMethods.prototype.getHexColor(diagram.pageSettings.background.color);
