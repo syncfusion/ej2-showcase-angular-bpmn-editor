@@ -303,7 +303,7 @@ export class UtilityMethods {
     var items = (document.getElementById('btnViewMenu') as any).ej2_instances[0].items;
     items[4].iconCss = diagram.pageSettings.showPageBreaks ? 'sf-icon-check-tick':'';
     items[5].iconCss = diagram.pageSettings.multiplePage ? 'sf-icon-check-tick':'';
-    // let pageBreakChecks = (document.getElementById('showPageBreaks') as any);
+    //let pageBreakChecks = (document.getElementById('showPageBreaks') as any);
     // pageBreakChecks.ownerDocument.activeElement.ej2_instances[0].checked = diagram.pageSettings.showPageBreaks ? true:false;
     //pageBgColor.value = UtilityMethods.prototype.getHexColor(diagram.pageSettings.background.color);
     }
@@ -497,12 +497,16 @@ export class UtilityMethods {
         var diagramContainer = document.getElementsByClassName('diagrambuilder-container')[0];
         if (diagramContainer.classList.contains(elementType)) {
                 diagramContainer.classList.remove(elementType);
-                (document.getElementById('hideProperty') as HTMLButtonElement).style.backgroundColor = ''
-                // (document.getElementById('hideProperty') as any).ej2_instances[0].isPrimary = true;
+                ((document.getElementById('hideProperty') as any).style.backgroundColor as any) = '';
+                ((document.getElementById('hideProperty') as any).style.color as any) = '#fff';
+                (document.getElementById('hideProperty') as any).ej2_instances[0].isPrimary = true;
         }
         else {
             diagramContainer.classList.add(elementType);
-            document.getElementById('hideProperty').style.backgroundColor = '#e3e3e3'
+            ((document.getElementById('hideProperty') as any).style.backgroundColor as any) = '#e3e3e3';
+            ((document.getElementById('hideProperty') as any).style.color as any) = 'black';
+            (document.getElementById('hideProperty') as any).ej2_instances[0].isPrimary = false;
+
             // hidePropertyBtn.isPrimary = false;
         }
         if (diagram) {

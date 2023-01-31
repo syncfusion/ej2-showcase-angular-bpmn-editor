@@ -181,8 +181,8 @@ export class DropDownDataSources {
     ];
     public lineStyles = [
         { text: '', value: '', className: 'ddl-svg-style ddl_linestyle_none' },
-        { text: '1,2', value: '1,2', className: 'ddl-svg-style ddl_linestyle_one_two' },
-        { text: '3,3', value: '3,3', className: 'ddl-svg-style ddl_linestyle_three_three' },
+        { text: '2 2', value: '2 2', className: 'ddl-svg-style ddl_linestyle_one_two' },
+        { text: '4 4', value: '4 4', className: 'ddl-svg-style ddl_linestyle_three_three' },
         { text: '5,3', value: '5,3', className: 'ddl-svg-style ddl_linestyle_five_three' },
         { text: '4,4,1', value: '4,4,1', className: 'ddl-svg-style ddl_linestyle_four_four_one' }
     ];

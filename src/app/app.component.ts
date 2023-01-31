@@ -79,7 +79,7 @@ export class AppComponent implements AfterViewInit{
 public rulerSettings: RulerSettingsModel = {showRulers:true};
 public snapSettings: SnapSettingsModel = { constraints: (SnapConstraints.All),};
 public pageSettings: PageSettingsModel = {
-  background: { color: 'White' }, width: 816, height: 1460, multiplePage: false, margin: { left: 5, top: 5 },
+  background: { color: 'White' }, width: 600, height: 1500, multiplePage: false, margin: { left: 5, top: 5 },
   orientation: 'Landscape'
 };
 public scrollSettings:ScrollSettingsModel = { canAutoScroll: false, scrollLimit: 'Infinity', minZoom: 0.25, maxZoom: 30 };
