@@ -467,7 +467,8 @@ private btnExportClick(): void {
     diagram.exportDiagram({
         fileName: document.getElementById('diagramName').innerHTML,
         format: this.selectedItem.exportSettings.format as FileFormats,
-        region: this.selectedItem.exportSettings.region as DiagramRegions
+        region: this.selectedItem.exportSettings.region as DiagramRegions,
+        multiplePage:this.selectedItem.diagram.pageSettings.multiplePage
     });
     this.exportDialog.hide();
 };
@@ -635,7 +636,7 @@ public enabelEditMenuItems(selectedItems:SelectorModel){
 public exportItems(): ItemModel[]
 {
     let exportItems: ItemModel[] = [
-        { text: 'JPG' }, { text: 'PNG' }, { text: 'BMP' }, { text: 'SVG' }
+        { text: 'JPG' }, { text: 'PNG' },{ text: 'SVG' }
     ]
     return exportItems;
 }
