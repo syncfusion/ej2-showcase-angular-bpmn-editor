@@ -358,7 +358,8 @@
                           </div>
                       </div>
                       <div class="row db-prop-row">
-                          <ejs-checkbox id='showPageBreaks' #showPageBreaks label="Page Breaks" [checked]="this.selectedItem.pageSettings.pageBreaks" (change)='diagramPropertyBinding.pageBreaksChange($event)'>
+                          <ejs-checkbox id='showPageBreak' #showPageBreak label="Page Breaks" [checked]="this.selectedItem.pageSettings.pageBreaks" 
+                          (change)='diagramPropertyBinding.pageBreaksChange($event)' (created)="checkBoxCreated($event)">
                           </ejs-checkbox>
                       </div>
                   </div>

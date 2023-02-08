@@ -11,15 +11,9 @@ export class PaperSize {
     public pageWidth: number|any;
     public pageHeight: number|any;
 }
-
 export class UtilityMethods {
     public static isOpen: boolean;
     public static selectedItem: SelectorViewModel;
-    // private selectedItem:SelectorViewModel =  new SelectorViewModel();
-    // constructor(selectedItem: SelectorViewModel) {
-    //     this.selectedItem = selectedItem;
-    // }
-    //private diagramEvents:DiagramClientSideEvents = new DiagramClientSideEvents(this.selectedItem);
     public arrangeMenuBeforeClose(args: BeforeOpenCloseMenuEventArgs): void {
         if (args.event && closest(args.event.target as Element, '.e-dropdown-btn') !== null) {
             args.cancel = true;
@@ -290,22 +284,10 @@ export class UtilityMethods {
             }
         }
     };
-    // public static openUploadBox(isOpen: boolean, extensionType: string): void {
-    //     let defaultUpload: any = document.getElementById('defaultfileupload');
-    //     defaultUpload = defaultUpload.ej2_instances[0];
-    //     defaultUpload.clearAll();
-    //     this.selectedItem.orgDataSettings.extensionType = defaultUpload.allowedExtensions = extensionType;
-    //     defaultUpload.dataBind();
-    //     this.isOpen = isOpen;
-    //     (document.getElementsByClassName('e-file-select-wrap')[0].children[0] as HTMLButtonElement).click();
-    // }
-    public viewSelectionChange(diagram:Diagram){
+    public viewSelectionChange(diagram:Diagram,pageBreak:any){
     var items = (document.getElementById('btnViewMenu') as any).ej2_instances[0].items;
     items[4].iconCss = diagram.pageSettings.showPageBreaks ? 'sf-icon-check-tick':'';
-    // items[5].iconCss = diagram.pageSettings.multiplePage ? 'sf-icon-check-tick':'';
-    //let pageBreakChecks = (document.getElementById('showPageBreaks') as any);
-    // pageBreakChecks.ownerDocument.activeElement.ej2_instances[0].checked = diagram.pageSettings.showPageBreaks ? true:false;
-    //pageBgColor.value = UtilityMethods.prototype.getHexColor(diagram.pageSettings.background.color);
+    pageBreak.checked = diagram.pageSettings.showPageBreaks;
     }
 
     public bindNodeProperties(node: NodeModel, selectedItem: SelectorViewModel): void {
