@@ -524,8 +524,8 @@ export class TextProperties {
 
 }
 
-
 export class SelectorViewModel{
+    public showPageBreak:any;
     public diagram:Diagram;
     public toolbarObj:ToolbarComponent;
     public preventPropertyChange: boolean = false;

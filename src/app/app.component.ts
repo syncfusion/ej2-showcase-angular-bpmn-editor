@@ -42,6 +42,9 @@ export class AppComponent implements AfterViewInit{
   public exportDialog: DialogComponent;
   @ViewChild('printDialog')
   public printDialog: DialogComponent;
+
+  @ViewChild('showPageBreak')
+  public showPageBreak: any;
   
   @ViewChild('ddlTextPosition')
   public ddlTextPosition: DropDownListComponent;
@@ -61,8 +64,6 @@ export class AppComponent implements AfterViewInit{
     
 }​​​​​​​
   public ngAfterViewInit(): void {
-    // this.generateDiagram();
-    // this.generatePalette();
     this.uploader();
     this.diagramClientSideEvents.ddlTextPosition = this.ddlTextPosition;
      this.selectedItem.diagram = this.diagram;
@@ -691,6 +692,9 @@ public toolbarCreated(){
      if(this.selectedItem.toolbarObj.items[5].cssClass.indexOf(' tb-item-selected')!==-1){
         c.classList.add('tb-item-selected');
      }
+}
+public checkBoxCreated(args:any){   
+    this.selectedItem.showPageBreak = this.showPageBreak;
 } 
 
 public toolbarEditorClick(args:ClickEventArgs): void {

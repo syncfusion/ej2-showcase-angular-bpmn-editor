@@ -308,7 +308,7 @@ export class DiagramClientSideEvents {
         if (diagram.historyManager.redoStack.length > 0) {
             toolbarContainer.classList.add('db-redo');
         }
-        this.selectedItem.utilityMethods.viewSelectionChange(diagram)
+        this.selectedItem.utilityMethods.viewSelectionChange(diagram,this.selectedItem.showPageBreak);
     };
     public userHandleClick(args:UserHandleEventsArgs){
         switch(args.element.name)
