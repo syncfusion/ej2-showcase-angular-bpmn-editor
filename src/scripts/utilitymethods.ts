@@ -707,21 +707,19 @@ export class UtilityMethods {
         }
     };
     public aspectClick(selectedItem:SelectorViewModel){
-        var isAspect = true;
-     let   aspectRatioBtn = (document.getElementById('aspectRatioBtn') as any).ej2_instances[0];
-    if(document.getElementById('aspectRatioBtn').classList.contains('e-active'))
-    {
-        document.getElementById('aspectRatioBtn').classList.remove('e-active');
+    let diagram = selectedItem.diagram;
+    let isAspect = true;
+    let aspectRatioBtn = (document.getElementById('aspectRatioBtn') as any).ej2_instances[0];
+    let node = diagram.selectedItems.nodes[0];
+    if(node.constraints & NodeConstraints.AspectRatio){
+        aspectRatioBtn.iconCss = 'sf-icon-unlock';
         isAspect = false;
-        aspectRatioBtn.iconCss =  'sf-icon-unlock'
-        
     }
     else{
-        document.getElementById('aspectRatioBtn').classList.remove('e-active');
-        isAspect = true;
         aspectRatioBtn.iconCss = 'sf-icon-lock';
+        isAspect = true;
     }
-        selectedItem.nodePropertyChange({propertyName: 'aspectRatio', propertyValue: isAspect}); 
+    selectedItem.nodePropertyChange({propertyName: 'aspectRatio', propertyValue: isAspect});
     };
 
     public fileName(){

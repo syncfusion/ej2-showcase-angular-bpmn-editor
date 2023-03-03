@@ -368,7 +368,8 @@ export class DiagramClientSideEvents {
             if( diagram.selectedItems.connectors.length){
                 canAllow = true;
             }
-            if ((diagram.selectedItems.nodes.length || diagram.selectedItems.connectors.length) && canAllow) {
+            let selectedObjects = diagram.selectedItems.nodes.concat(diagram.selectedItems.connectors as Object);
+            if ((diagram.selectedItems.nodes.length || diagram.selectedItems.connectors.length) && canAllow && selectedObjects.length === 1) {
                 
                 
                     var item = args.items[i];
@@ -469,6 +470,14 @@ export class DiagramClientSideEvents {
                     }
                 }
             }
+            }
+            else if(selectedObjects.length>1){
+                let item = args.items[i];
+                if(item.text === 'Cut' || item.text === 'Copy' || item.text === 'Delete')
+                {
+                    if(hiddenId.indexOf(item.id)>-1)
+                    hiddenId.splice(hiddenId.indexOf(item.id), 1);
+                }
             }
         }
         this.selectedItem.utilityMethods.updateContextMenuSelection(true,args,diagram);
@@ -805,6 +814,12 @@ export class DiagramPropertyBinding {
     };
     public toolbarTextAlignChange(args: ToolbarClickEventArgs): void {
         let propertyName: string = args.item.tooltipText.replace('Align ', '');
+        if(propertyName === 'Top'){
+            propertyName = 'Bottom';
+        }
+        else if(propertyName === 'Bottom'){
+            propertyName = 'Top';
+        }
         this.textPropertyChange(propertyName, propertyName);
     }
     public textPositionChange(args: DropDownChangeEventArgs): void {
