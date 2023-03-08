@@ -1,5 +1,5 @@
 import { AnnotationAlignment, BpmnActivity, BpmnBoundary, BpmnDataObjects, BpmnEvents, BpmnFlow, BpmnGateway, BpmnGateways, BpmnLoops, BpmnShapeModel, BpmnTasks, BpmnTriggers, Connector, ConnectorModel, ContextMenuItemModel, Diagram, DiagramBeforeMenuOpenEventArgs, HorizontalAlignment, IDragEnterEventArgs, IEndChangeEventArgs, IHistoryChangeArgs, IRotationEventArgs, ISelectionChangeEventArgs, ISizeChangeEventArgs, NodeModel,  PathAnnotationModel,  SelectorModel,  ShapeAnnotationModel, TextAlign, TextStyleModel, UserHandleEventsArgs, UserHandleModel, VerticalAlignment } from "@syncfusion/ej2-angular-diagrams";
-import { PathAnnotation,ShapeAnnotation ,SelectorConstraints} from '@syncfusion/ej2-diagrams'
+import { PathAnnotation,ShapeAnnotation ,SelectorConstraints, IDropEventArgs} from '@syncfusion/ej2-diagrams'
 import { AppComponent } from "src/app/app.component";
 import { NodeProperties, SelectorViewModel } from "./selector";
 import { UtilityMethods } from "./utilitymethods";
@@ -320,7 +320,7 @@ export class DiagramClientSideEvents {
                 this.selectedItem.diagram.paste( this.selectedItem.diagram.selectedItems.selectedObjects);
                break;
             case 'Draw':
-                this.selectedItem.diagram.drawingObject.shape = {};
+                this.selectedItem.diagram.drawingObject.shape = { type:'Bpmn',sequence:'Normal'};
                 (this.selectedItem.diagram.drawingObject as Connector).type =  (this.selectedItem.diagram.drawingObject as Connector).type? (this.selectedItem.diagram.drawingObject as Connector).type:'Orthogonal';
                 (this.selectedItem.diagram.drawingObject as Connector).sourceID = this.drawingNode.id;
                 this.selectedItem.diagram.dataBind();
@@ -334,7 +334,7 @@ export class DiagramClientSideEvents {
         if (args.element.className !== 'e-menu-parent e-ul ') {
             hiddenId = ['Adhoc', 'Loop', 'taskCompensation', 'Activity-Type', 'Boundary', 'DataObject',
                 'collection', 'DeftCall', 'TriggerResult', 'EventType', 'TaskType', 'GateWay','Copy','Paste','Cut','SelectAll','Delete',
-            'Association','Sequence','MessageFlow','Condition type','Direction','MessageType'];
+            'Association','Sequence','MessageFlow','Condition type','Direction','MessageType','TextAnnotation'];
         }
         for (var i = 0; i < args.items.length; i++) {
             if(args.items[i].text === 'Paste')
@@ -353,7 +353,7 @@ export class DiagramClientSideEvents {
                 }
             }
             var canAllow = false;
-            if(diagram.selectedItems.nodes.length){
+            if(diagram.selectedItems.nodes.length && (diagram.selectedItems.nodes[0].shape as BpmnShapeModel).shape !== 'TextAnnotation'){
                 if(diagram.selectedItems.nodes[0].children === undefined){
                     canAllow = true;
                 }
@@ -365,7 +365,7 @@ export class DiagramClientSideEvents {
                         } 
                 }
             }
-            if( diagram.selectedItems.connectors.length){
+            if( diagram.selectedItems.connectors.length && !(diagram.selectedItems.connectors[0].targetID.includes('newAnnotation'))){
                 canAllow = true;
             }
             let selectedObjects = diagram.selectedItems.nodes.concat(diagram.selectedItems.connectors as Object);
@@ -429,6 +429,11 @@ export class DiagramClientSideEvents {
                             if ((bpmnShape.activity.activity === 'SubProcess')) {
                                 hiddenId.splice(hiddenId.indexOf(item.id), 1);
                             }
+                        }
+                    }
+                    if(item.text === 'Add Text Annotation'){
+                        if(diagram.selectedItems.nodes.length && (diagram.selectedItems.nodes[0].shape as BpmnShapeModel).shape !== 'Message' && (diagram.selectedItems.nodes[0].shape as BpmnShapeModel).shape !== 'DataSource'){
+                        hiddenId.splice(hiddenId.indexOf(item.id), 1);
                         }
                     }
                     if (item.text === 'Data Object') {
@@ -616,6 +621,9 @@ export class DiagramClientSideEvents {
         }
         if (args.item.id === 'SelectAll'){
             diagram.selectAll();
+        }
+        if(args.item.id === 'TextAnnotation'){
+            diagram.addTextAnnotation({ id: 'newAnnotation', text: 'Text', length: 150, angle: 290 }, diagram.selectedItems.nodes[0])
         }
     };
     public diagramClear()
