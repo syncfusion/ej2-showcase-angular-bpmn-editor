@@ -85,7 +85,7 @@ public pageSettings: PageSettingsModel = {
 };
 public scrollSettings:ScrollSettingsModel = { canAutoScroll: false, scrollLimit: 'Infinity', minZoom: 0.25, maxZoom: 30 };
 public selectedItems:SelectorModel = { constraints: SelectorConstraints.All};
-public drawingObject: ConnectorModel|NodeModel = {type:'Orthogonal'};
+public drawingObject: ConnectorModel|NodeModel = {type:'Orthogonal',shape:{type:'Bpmn'}};
 public commandManger: CommandManagerModel = {
  commands : [{
         name: 'New',
@@ -316,6 +316,9 @@ public contextMenu:ContextMenuSettingsModel = {
                     {text: 'Non-Initiating Message', id: 'NonInitiatingMessage',iconCss:'e-bpmn-icons'},
             ]
         },
+        {
+                text:'Add Text Annotation',id:'TextAnnotation',iconCss:'e-bpmn-icons e-TextAnnotation'
+        }
     ],
     showCustomMenuOnly: true,
 };
@@ -324,7 +327,7 @@ public contextMenu:ContextMenuSettingsModel = {
 public symbolMargin: MarginModel = { left: 12, right: 12, top: 12, bottom: 12 };
 public expandMode: ExpandMode = 'Multiple';
 
-  //Initialize the flowshapes for the symbol palatte
+  //Initialize the bpmn shapes for the symbol palatte
   public bpmnShapes:NodeModel[]|any = [
     {
         id: 'Task', width: 35, height: 30, 
@@ -394,13 +397,13 @@ public expandMode: ExpandMode = 'Multiple';
     },
     {
         id:'Message Flow',
-        sourcePoint: { x: 0, y: 0 }, targetPoint: { x: 30, y: 23 },type: 'Straight',
+        sourcePoint: { x: 0, y: 0 }, targetPoint: { x: 30, y: 22 },type: 'Straight',
         sourceDecorator:{shape:'None'},targetDecorator:{shape:'Arrow',style:{fill:'white'}},
         style:{strokeDashArray:'4 4'}
     },
     {
         id: 'Message', width: 35,
-        height: 25,shape: { type: 'Bpmn', shape: 'Message',},
+        height: 26,shape: { type: 'Bpmn', shape: 'Message',},
       },
     {
         id:'Data_Source', width:30,height:28, shape: {
@@ -811,9 +814,6 @@ switch(option)
         let page = (document.getElementById('pageSettingsList') as any).ej2_instances[0]
         this.selectedItem.printSettings.pageHeight = this.selectedItem.diagram.pageSettings.height;
         this.selectedItem.printSettings.pageWidth = this.selectedItem.diagram.pageSettings.width;
-        this.selectedItem.printSettings.paperSize = page.value;
-        this.selectedItem.printSettings.isPortrait = this.selectedItem.diagram.pageSettings.orientation === 'Portrait'? true:false
-        this.selectedItem.printSettings.isLandscape = this.selectedItem.diagram.pageSettings.orientation === 'Landscape'? true:false
         this.selectedItem.printSettings.multiplePage = this.selectedItem.diagram.pageSettings.multiplePage;
         this.printDialog.show();
         break;
@@ -1080,6 +1080,7 @@ public enableMenuItems(itemText: string, diagram: Diagram): boolean {
   public nodeDefaults(node: NodeModel): NodeModel {
     // node.userHandles = [];
     (node as NodeModel).ports = getNodePorts();
+    node.constraints = NodeConstraints.Default|NodeConstraints.AllowDrop;
     return node;
   }
 
@@ -1240,107 +1241,62 @@ public nodes:NodeModel[] = [
  // Initialize connectors for diagram
   public connectors:ConnectorModel[] = [
     {
-        id:'connector1',sourceID:'Start1',targetID:'Task1',type:'Orthogonal'
+        id:'connector1',sourceID:'Start1',targetID:'Task1',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector2',sourceID:'Task1',targetID:'Task2',type:'Orthogonal'
+        id:'connector2',sourceID:'Task1',targetID:'Task2',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector3',sourceID:'Task2',targetID:'Gateway1',type:'Orthogonal'
+        id:'connector3',sourceID:'Task2',targetID:'Gateway1',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector4',sourceID:'Gateway1',targetID:'Task3',annotations:[{content:'Book is on Loan'}],type:'Orthogonal'
+        id:'connector4',sourceID:'Gateway1',targetID:'Task3',annotations:[{content:'Book is on Loan'}],type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector5',sourceID:'Task3',targetID:'Gateway2',type:'Orthogonal'
+        id:'connector5',sourceID:'Task3',targetID:'Gateway2',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector6',sourceID:'Gateway2',targetID:'Intermediate1',sourcePortID:'right',targetPortID:'left',type:'Orthogonal'
+        id:'connector6',sourceID:'Gateway2',targetID:'Intermediate1',sourcePortID:'right',targetPortID:'left',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector7',sourceID:'Intermediate1',targetID:'Task4',type:'Orthogonal'
+        id:'connector7',sourceID:'Intermediate1',targetID:'Task4',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector8',sourceID:'Task4',targetID:'End1',type:'Orthogonal'
+        id:'connector8',sourceID:'Task4',targetID:'End1',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector9',sourceID:'Gateway2',targetID:'Intermediate2',sourcePortID:'top',targetPortID:'left',type:'Orthogonal'
+        id:'connector9',sourceID:'Gateway2',targetID:'Intermediate2',sourcePortID:'top',targetPortID:'left',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector10',sourceID:'Gateway2',targetID:'Intermediate3',sourcePortID:'bottom',targetPortID:'left',type:'Orthogonal'
+        id:'connector10',sourceID:'Gateway2',targetID:'Intermediate3',sourcePortID:'bottom',targetPortID:'left',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector11',sourceID:'Intermediate2',targetID:'Task7',type:'Orthogonal'
+        id:'connector11',sourceID:'Intermediate2',targetID:'Task7',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector12',sourceID:'Intermediate3',targetID:'Task4',sourcePortID:'right',targetPortID:'bottom',type:'Orthogonal'
+        id:'connector12',sourceID:'Intermediate3',targetID:'Task4',sourcePortID:'right',targetPortID:'bottom',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector13',sourceID:'Task7',targetID:'Task8',type:'Orthogonal'
+        id:'connector13',sourceID:'Task7',targetID:'Task8',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector14',sourceID:'Task8',targetID:'Intermediate4',sourcePortID:'top',targetPortID:'right',type:'Orthogonal'
+        id:'connector14',sourceID:'Task8',targetID:'Intermediate4',sourcePortID:'top',targetPortID:'right',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector15',sourceID:'Intermediate4',targetID:'Task2',sourcePortID:'left',targetPortID:'top',type:'Orthogonal'
+        id:'connector15',sourceID:'Intermediate4',targetID:'Task2',sourcePortID:'left',targetPortID:'top',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
         id:'connector16',sourceID:'Gateway1',targetID:'Task5',sourcePortID:'bottom',targetPortID:'left',
-        annotations:[{content:'Book is Avaliable'}],type:'Orthogonal'
+        annotations:[{content:'Book is Avaliable'}],type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector17',sourceID:'Task5',targetID:'Task6',type:'Orthogonal'
+        id:'connector17',sourceID:'Task5',targetID:'Task6',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
     {
-        id:'connector18',sourceID:'Task6',targetID:'End1',sourcePortID:'right',targetPortID:'bottom',type:'Orthogonal'
+        id:'connector18',sourceID:'Task6',targetID:'End1',sourcePortID:'right',targetPortID:'bottom',type:'Orthogonal',shape:{type:'Bpmn',sequence:'Normal'}
     },
 ]
 
-
-
-  //Initializes connector symbols for the symbol palette
-  private connectorSymbols: ConnectorModel[] = [
-    {
-      id: 'Link1',
-      type: 'Orthogonal',
-      sourcePoint: { x: 0, y: 0 },
-      targetPoint: { x: 60, y: 60 },
-      targetDecorator: { shape: 'Arrow', style: {strokeColor: '#757575', fill: '#757575'} },
-      style: { strokeWidth: 1, strokeColor: '#757575' }
-    },
-    {
-      id: 'link3',
-      type: 'Orthogonal',
-      sourcePoint: { x: 0, y: 0 },
-      targetPoint: { x: 60, y: 60 },
-      style: { strokeWidth: 1, strokeColor: '#757575' },
-      targetDecorator: { shape: 'None' }
-    },
-    {
-      id: 'Link21',
-      type: 'Straight',
-      sourcePoint: { x: 0, y: 0 },
-      targetPoint: { x: 60, y: 60 },
-      targetDecorator: { shape: 'Arrow', style: {strokeColor: '#757575', fill: '#757575'} },
-      style: { strokeWidth: 1, strokeColor: '#757575' }
-    },
-    {
-      id: 'link23',
-      type: 'Straight',
-      sourcePoint: { x: 0, y: 0 },
-      targetPoint: { x: 60, y: 60 },
-      style: { strokeWidth: 1, strokeColor: '#757575' },
-      targetDecorator: { shape: 'None' }
-    },
-    {
-      id: 'link33',
-      type: 'Bezier',
-      sourcePoint: { x: 0, y: 0 },
-      targetPoint: { x: 60, y: 60 },
-      style: { strokeWidth: 1, strokeColor: '#757575' },
-      targetDecorator: { shape: 'None' }
-    }
-  ];
   public diagramCreate(args: Object): void {
     // paletteIconClick();
   }

@@ -839,47 +839,6 @@
                     </ejs-dropdownlist>
                 </div>
             </div>
-            <div class="row db-dialog-prop-row">
-                <div class="row">
-                    Print Settings
-                </div>
-                <div class="row db-dialog-child-prop-row">
-                    <ejs-dropdownlist [dataSource]='dropDownDataSources.paperList' [fields]='dropdownListFields' [(value)]='this.selectedItem.printSettings.paperSize'>
-                    </ejs-dropdownlist>
-                </div>
-            </div>
-            <div id="printCustomSize" class="row db-dialog-prop-row" style="display:none; height: 28px;">
-                <div class="col-xs-6 db-col-left">
-                    <div class="db-text-container">
-                        <div class="db-text">
-                            <span>W</span>
-                        </div>
-                        <div class="db-text-input">
-                            <ejs-numerictextbox id="printPageWidth" min="100" step="1" format="n0" [(value)]="selectedItem.printSettings.pageWidth"></ejs-numerictextbox>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-6 db-col-right">
-                    <div class="db-text-container">
-                        <div class="db-text">
-                            <span>H</span>
-                        </div>
-                        <div class="db-text-input">
-                            <ejs-numerictextbox id="printPageHeight" min="100" step="1" format="n0" [(value)]="selectedItem.printSettings.pageHeight"></ejs-numerictextbox>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="printOrientation" class="row db-dialog-prop-row" style="height: 28px; padding: 5px 0px;">
-                <div class="col-xs-3 db-prop-col-style" style="margin-right: 8px;">
-                    <ejs-radiobutton id='printPortrait' label="Portrait" name="printSettings" [checked]="true" >
-                    </ejs-radiobutton>
-                </div>
-                <div class="col-xs-3 db-prop-col-style">
-                    <ejs-radiobutton id='printLandscape' label="Landscape" name="printSettings" >
-                    </ejs-radiobutton>
-                </div>
-            </div>
             <div class="row db-dialog-prop-row" style="margin-top: 16px">
                 <ejs-checkbox id='printMultiplePage' label="Scale to fit 1 page" [(checked)]="selectedItem.printSettings.multiplePage"></ejs-checkbox>
             </div>

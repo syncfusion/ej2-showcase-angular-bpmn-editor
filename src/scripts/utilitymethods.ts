@@ -121,6 +121,7 @@ export class UtilityMethods {
         diagram.clearSelection();
         diagram.drawingObject.sourceID = '';
         diagram.drawingObject.type = args.item.text;
+        diagram.drawingObject.shape = { type: 'Bpmn', sequence:'Normal' };
         diagram.tool = DiagramTools.ContinuousDraw;
         diagram.selectedItems.userHandles = [];
         diagram.dataBind();
