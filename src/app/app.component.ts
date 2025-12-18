@@ -2,14 +2,15 @@ import { Component, ViewEncapsulation, ViewChild,Inject, AfterViewInit } from '@
 import { AlignmentOptions, BpmnFlow, BpmnFlowModel, BpmnShapeModel, CommandManagerModel, ContextMenuSettings, ContextMenuSettingsModel, DiagramBeforeMenuOpenEventArgs, DiagramComponent, DiagramRegions,  FileFormats, IHistoryChangeArgs, IScrollChangeEventArgs, PageSettingsModel, RulerSettingsModel, ScrollSettingsModel,  SelectorModel, ShapeAnnotationModel,  ZoomOptions } from '@syncfusion/ej2-angular-diagrams';
 import { DropDownListComponent, } from '@syncfusion/ej2-angular-dropdowns';
 // import { FieldSettingsModel,  } '@syncfusion/ej2-dropdowns';
-import { ClickEventArgs } from '@syncfusion/ej2-angular-navigations';
+import { ClickEventArgs, MenuComponent } from '@syncfusion/ej2-angular-navigations';
 import { Uploader } from '@syncfusion/ej2-inputs';
 import { BeforeOpenCloseMenuEventArgs,  } from '@syncfusion/ej2-angular-splitbuttons';
 import { formatUnit, createElement, closest } from '@syncfusion/ej2-base';
 import {
   Diagram, NodeModel, UndoRedo, ConnectorModel, PointPortModel, Connector, FlowShapeModel,
   SymbolInfo, IDragEnterEventArgs, SnapSettingsModel, MarginModel, TextStyleModel, StrokeStyleModel,
-  OrthogonalSegmentModel, Node, PaletteModel,BpmnDiagrams,KeyModifiers,SnapConstraints,DiagramTools,NodeConstraints,Keys,SelectorConstraints,SymbolPalette,PrintAndExport
+  OrthogonalSegmentModel, Node, PaletteModel,BpmnDiagrams,KeyModifiers,SnapConstraints,DiagramTools,NodeConstraints,Keys,SelectorConstraints,SymbolPalette,PrintAndExport,
+  FlipDirection
 } from '@syncfusion/ej2-diagrams';
 import { ExpandMode, ItemModel as ToolbarItemModel , MenuAnimationSettingsModel } from '@syncfusion/ej2-navigations';
 import { ItemModel,MenuEventArgs ,DropDownButton} from '@syncfusion/ej2-splitbuttons';
@@ -40,8 +41,6 @@ export class AppComponent implements AfterViewInit{
   public diagram: Diagram;
   @ViewChild('exportDialog')
   public exportDialog: DialogComponent;
-  @ViewChild('printDialog')
-  public printDialog: DialogComponent;
 
   @ViewChild('showPageBreak')
   public showPageBreak: any;
@@ -52,6 +51,9 @@ export class AppComponent implements AfterViewInit{
   @ViewChild('hyperlinkDialog')
   public hyperlinkDialog: DialogComponent;
 
+  @ViewChild('menuBar')
+  //Menubar
+  public menuBar: MenuComponent;
   public dropDownDataSources: DropDownDataSources = new DropDownDataSources();
   public selectedItem: SelectorViewModel = new SelectorViewModel();
   public utilityMethods: UtilityMethods = new UtilityMethods();
@@ -67,7 +69,6 @@ export class AppComponent implements AfterViewInit{
     this.uploader();
     this.diagramClientSideEvents.ddlTextPosition = this.ddlTextPosition;
      this.selectedItem.diagram = this.diagram;
-    document.onmouseover = this.menumouseover.bind(this);
   }
 
   public strokeStyleItemTemplate: string = '<div class="db-ddl-template-style"><span class="${className}"></span></div>';
@@ -80,7 +81,7 @@ export class AppComponent implements AfterViewInit{
 public rulerSettings: RulerSettingsModel = {showRulers:true};
 public snapSettings: SnapSettingsModel = { constraints: (SnapConstraints.All),};
 public pageSettings: PageSettingsModel = {
-  background: { color: 'White' }, width: 600, height: 1500, multiplePage: true, margin: { left: 5, top: 5 },
+  background: { color: 'White' }, width: 600, height: 1500, multiplePage: false, margin: { left: 5, top: 5 },
   orientation: 'Landscape'
 };
 public scrollSettings:ScrollSettingsModel = { canAutoScroll: false, scrollLimit: 'Infinity', minZoom: 0.25, maxZoom: 30 };
@@ -396,7 +397,7 @@ public expandMode: ExpandMode = 'Multiple';
         shape: { type: 'Bpmn', flow: 'Association',association:'Default'} , 
     },
     {
-        id:'Message Flow',
+        id:'Message_Flow',
         sourcePoint: { x: 0, y: 0 }, targetPoint: { x: 30, y: 22 },type: 'Straight',
         sourceDecorator:{shape:'None'},targetDecorator:{shape:'Arrow',style:{fill:'white'}},
         style:{strokeDashArray:'4 4'}
@@ -436,7 +437,6 @@ public dropdownListFields: any = { text: 'text', value: 'value' };
 public animationSettings: MenuAnimationSettingsModel = { effect: 'None' };
 public dialogAnimationSettings: AnimationSettingsModel = { effect: 'None' };
 public dlgTarget: HTMLElement = document.body;
-public printingButtons: Object[] = this.getDialogButtons('print');
 public exportingButtons: Object[] = this.getDialogButtons('export');
 public hyperlinkButtons: Object[] = this.getDialogButtons('hyperlink');
 public dialogVisibility: boolean = false;
@@ -468,42 +468,23 @@ public renameDiagram(args: MouseEvent): void {
 
 private btnExportClick(): void {
     let diagram: Diagram = this.selectedItem.diagram;
+    let isMultiple: boolean = false;
+    if (this.selectedItem.exportSettings.region === 'PageSettings') {
+        isMultiple = this.selectedItem.diagram.pageSettings.multiplePage;
+    }
     diagram.exportDiagram({
-        fileName: document.getElementById('diagramName').innerHTML,
+        fileName: (document.getElementById('exportfileName') as HTMLInputElement).value,
         format: this.selectedItem.exportSettings.format as FileFormats,
         region: this.selectedItem.exportSettings.region as DiagramRegions,
-        multiplePage:this.selectedItem.diagram.pageSettings.multiplePage
+        multiplePage:isMultiple
     });
     this.exportDialog.hide();
 };
 private btnPrintClick(): void {
-    let pageWidth: number = this.selectedItem.printSettings.pageWidth;
-    let pageHeight: number = this.selectedItem.printSettings.pageHeight;
-    let paperSize: PaperSize = this.selectedItem.utilityMethods.getPaperSize(this.selectedItem.printSettings.paperSize);
-    if (paperSize.pageHeight && paperSize.pageWidth) {
-        pageWidth = paperSize.pageWidth;
-        pageHeight = paperSize.pageHeight;
-    }
-    if (this.selectedItem.pageSettings.isPortrait) {
-        if (pageWidth > pageHeight) {
-            let temp: number = pageWidth;
-            pageWidth = pageHeight;
-            pageHeight = temp;
-        }
-    } else {
-        if (pageHeight > pageWidth) {
-            let temp: number = pageHeight;
-            pageHeight = pageWidth;
-            pageWidth = temp;
-        }
-    }
     let diagram: Diagram = this.selectedItem.diagram;
     diagram.print({
-        region: this.selectedItem.printSettings.region as DiagramRegions, pageHeight: pageHeight, pageWidth: pageWidth,
-        multiplePage: !this.selectedItem.printSettings.multiplePage,
-        pageOrientation: this.selectedItem.printSettings.isPortrait ? 'Portrait' : 'Landscape'
+        region: 'Content',
     });
-    this.printDialog.hide();
 }
 private btnCancelClick(args: MouseEvent): void {
     let ss: HTMLElement = args.target as HTMLElement;
@@ -511,9 +492,6 @@ private btnCancelClick(args: MouseEvent): void {
     switch (key) {
         case 'exportDialog':
             this.exportDialog.hide();
-            break;
-        case 'printDialog':
-            this.printDialog.hide();
             break;
         case 'hyperlinkDialog':
             this.hyperlinkDialog.hide();
@@ -560,11 +538,6 @@ public getDialogButtons(dialogType: string): Object[] {
                 click: this.btnExportClick.bind(this), buttonModel: { content: 'Export', cssClass: 'e-flat e-db-primary', isPrimary: true }
             });
             break;
-        case 'print':
-            buttons.push({
-                click: this.btnPrintClick.bind(this), buttonModel: { content: 'Print', cssClass: 'e-flat e-db-primary', isPrimary: true }
-            });
-            break;
         case 'hyperlink':
             buttons.push({
                 click: this.btnHyperLink.bind(this), buttonModel: { content: 'Apply', cssClass: 'e-flat e-db-primary', isPrimary: true }
@@ -577,65 +550,6 @@ public getDialogButtons(dialogType: string): Object[] {
     return buttons;
 }
 
-private buttonInstance: any;
-public menumouseover(args: MouseEvent): void {
-    let diagram = this.selectedItem.diagram;
-    let target: any = args.target as HTMLButtonElement;
-    if (target && (target.className === 'e-control e-dropdown-btn e-lib e-btn db-dropdown-menu' ||
-        target.className === 'e-control e-dropdown-btn e-lib e-btn db-dropdown-menu e-ddb-active')) {
-        if (this.buttonInstance && this.buttonInstance.id !== target.id) {
-            if (this.buttonInstance.getPopUpElement().classList.contains('e-popup-open')) {
-                this.buttonInstance.toggle();
-                let buttonElement: any = document.getElementById(this.buttonInstance.element.id);
-                buttonElement.classList.remove('e-btn-hover');
-            }
-        }
-        let button1: any = target.ej2_instances[0];
-        this.buttonInstance = button1;
-        if (button1.getPopUpElement().classList.contains('e-popup-close')) {
-            button1.toggle();
-            if (button1.element.id === 'btnEditMenu') {
-                this.enabelEditMenuItems(diagram.selectedItems);
-            }
-            let buttonElement: any = document.getElementById(this.buttonInstance.element.id);
-            buttonElement.classList.add('e-btn-hover');
-        }
-    } else {
-        if (closest(target, '.e-dropdown-popup') === null && closest(target, '.e-dropdown-btn') === null) {
-            if (this.buttonInstance && this.buttonInstance.getPopUpElement().classList.contains('e-popup-open')) {
-                this.buttonInstance.toggle();
-                let buttonElement: any = document.getElementById(this.buttonInstance.element.id);
-                buttonElement.classList.remove('e-btn-hover');
-            }
-        }
-    }
-}
-
-public enabelEditMenuItems(selectedItems:SelectorModel){
-        var contextInstance = document.getElementById('editContextMenu');
-        let diagram = this.selectedItem.diagram;
-        var contextMenu = (contextInstance as any).ej2_instances[0];
-        // var selectedItems = this.diagram.selectedItems.nodes;
-        // selectedItems = selectedItems.concat(this.diagram.selectedItems.connectors);
-        for (var i = 0; i < contextMenu.items.length; i++) {
-            contextMenu.enableItems([contextMenu.items[i].text], false);
-        }
-        var objects = ((selectedItems.nodes as NodeModel) as any).concat(selectedItems.connectors as ConnectorModel);
-            if(objects.length>0)
-            {
-                contextMenu.enableItems(['Cut', 'Copy', 'Delete','Order Commands','Rotate']);
-            }
-            if(diagram.historyManager.undoStack.length>0){
-                contextMenu.enableItems(['Undo']);
-            }
-            if(diagram.historyManager.redoStack.length>0){
-                contextMenu.enableItems(['Redo']);
-            }
-            if((diagram.commandHandler.clipboardData.pasteIndex !== undefined
-                && diagram.commandHandler.clipboardData.clipObject !==undefined)){
-                    contextMenu.enableItems(['Paste']);
-                }  
-}
 
 public exportItems(): ItemModel[]
 {
@@ -653,20 +567,6 @@ public onExport(args: any)
 // });
 // conTypeBtn.appendTo('#conTypeBtn');
 
-public arrangeMenuBeforeClose(args: BeforeOpenCloseMenuEventArgs): void {
-    if (args.event && closest(args.event.target as Element, '.e-dropdown-btn') !== null) {
-        args.cancel = true;
-    }
-    if (!args.element) {
-        args.cancel = true;
-    }
-}
-public arrangeMenuBeforeOpen(args: BeforeOpenCloseMenuEventArgs): void {
-    (args.element.children[0] as HTMLElement).style.display = 'block';
-    if (args.event && closest(args.event.target as Element, '.e-dropdown-btn') !== null) {
-        args.cancel = true;
-    }
-}
 
 public beforeItemRender(args: MenuEventArgs): void {
   let shortCutText: string = this.utilityMethods.getShortCutKey(args.item.text as any);
@@ -811,13 +711,10 @@ switch(option)
         this.utilityMethods.download(diagram.saveDiagram(), (document.getElementById('diagramName') as HTMLInputElement).innerHTML);
         break;
     case 'Print':
-        let page = (document.getElementById('pageSettingsList') as any).ej2_instances[0]
-        this.selectedItem.printSettings.pageHeight = this.selectedItem.diagram.pageSettings.height;
-        this.selectedItem.printSettings.pageWidth = this.selectedItem.diagram.pageSettings.width;
-        this.selectedItem.printSettings.multiplePage = this.selectedItem.diagram.pageSettings.multiplePage;
-        this.printDialog.show();
+        this.btnPrintClick();
         break;
     case 'Export':
+        (document.getElementById('exportfileName') as HTMLInputElement).value = document.getElementById('diagramName').innerHTML;
         this.exportDialog.show();
         break;
     case 'Open':
@@ -950,10 +847,10 @@ switch(option)
         diagram.pageSettings.showPageBreaks = !diagram.pageSettings.showPageBreaks;
         // showPageBreaks.checked = !showPageBreaks.checked;
         break;
-    // case 'Show Multiple page':
-    //     args.item.iconCss = args.item.iconCss ? '' : 'sf-icon-check-tick';
-    //     diagram.pageSettings.multiplePage = ! diagram.pageSettings.multiplePage;
-    //     break;
+    case 'Show Multiple Page':
+        args.item.iconCss = args.item.iconCss ? '' : 'sf-icon-check-tick';
+        diagram.pageSettings.multiplePage = ! diagram.pageSettings.multiplePage;
+        break;
     case 'Fit To Width':
         diagram.fitToPage({mode:'Width'});
         break;
@@ -976,48 +873,38 @@ else if (option ===  'Orthogonal' || option === 'Straight' || option === 'Bezier
 }
 diagram.dataBind();
 }
+//To disable menu items.
+public beforeMenuOpen(args: BeforeOpenCloseMenuEventArgs ) {
+    let parentMenu = (args as any).parentItem;
+    if(parentMenu.text === 'Edit') {
+        let selectedItems = (this.diagram.selectedItems.nodes as any).concat(this.diagram.selectedItems.connectors);
+        if (selectedItems && selectedItems.length === 0) {
+            let disableItems = [args.items[3].text,args.items[4].text,args.items[7].text,args.items[8].text,args.items[10].text];
+            this.menuBar.enableItems(disableItems,false);
+        }
+        if (this.diagram.historyManager && this.diagram.historyManager.undoStack.length === 0) {
+            this.menuBar.enableItems([args.items[0].text],false);
+        }
+        if (this.diagram.historyManager && this.diagram.historyManager.redoStack.length === 0) {
+            this.menuBar.enableItems([args.items[1].text],false);
+        }
+        if (this.diagram.commandHandler.clipboardData && !this.diagram.commandHandler.clipboardData.clipObject) {
+            this.menuBar.enableItems([args.items[5].text],false);
+        }
+    }
+}
 
-// public onUploadSuccess(args: { [key: string]: Object }): void {
-//     (document.getElementsByClassName('sb-content-overlay')[0] as HTMLDivElement).style.display = 'none';
-//     if (args.operation !== 'remove') {
-//         let file1: { [key: string]: Object } = args.file as { [key: string]: Object };
-//         let file: Blob = file1.rawFile as Blob;
-//         OrgChartUtilityMethods.fileType = file1.type.toString();
-//         let reader: FileReader = new FileReader();
-//         if (OrgChartUtilityMethods.fileType.toLowerCase() === 'jpg' || OrgChartUtilityMethods.fileType.toLowerCase() === 'png') {
-//             reader.readAsDataURL(file);
-//             reader.onloadend = this.setImage.bind(this);
-//         } else {
-//             reader.readAsText(file);
-//             if (OrgChartUtilityMethods.fileType === 'json' && CommonKeyboardCommands.isOpen) {
-//                 reader.onloadend = this.loadDiagram.bind(this);
-//             } else {
-//                 OrgChartUtilityMethods.isUploadSuccess = true;
-//                 reader.onloadend = OrgChartUtilityMethods.readFile.bind(OrgChartUtilityMethods);
-//             }
-//         }
-//         this.utilityMethods.isOpen = false;
-//     }
-// }
-
-// public onUploadFailure(args: { [key: string]: Object }): void {
-//     (document.getElementsByClassName('sb-content-overlay')[0] as HTMLDivElement).style.display = 'none';
-// }
-
-// public onUploadFileSelected(args: { [key: string]: Object }): void {
-//     (document.getElementsByClassName('sb-content-overlay')[0] as HTMLDivElement).style.display = '';
-// }
-
+public uploadObj: any;
 public uploader(){
-    let uploadObj:Uploader = new Uploader({
+    this.uploadObj = new Uploader({
     asyncSettings: {
        saveUrl: 'https://services.syncfusion.com/angular/production/api/FileUploader/Save',
-       removeUrl: 'https://services.syncfusion.com/angular/production/api/FileUploader/Remove'
+      removeUrl: 'https://services.syncfusion.com/angular/production/api/FileUploader/Remove'
     },
     success: this.onUploadSuccess,
     showFileList:false
   });
-  uploadObj.appendTo('#fileupload');
+  this.uploadObj.appendTo('#fileupload');
   }
 
   public onUploadSuccess(args:any) {
@@ -1026,6 +913,9 @@ public uploader(){
     var reader = new FileReader();
     reader.readAsText(file);
     reader.onloadend = AppComponent.loadDiagram
+    if ((this as any).clearAll) {
+        (this as any).clearAll();
+    }
   }
   
   //Load the diagraming object.
@@ -1058,16 +948,6 @@ public enableMenuItems(itemText: string, diagram: Diagram): boolean {
                   return true;
           }
       }
-    //   if (!(diagram.commandHandler.clipboardData.pasteIndex !== undefined
-    //     && diagram.commandHandler.clipboardData.clipObject !==undefined) && itemText === 'Paste') {
-    //       return true;
-    //   }
-    //   if (itemText === 'Undo' && (diagram as any).historyManager.undoStack.length === 0) {
-    //       return true;
-    //   }
-    //   if (itemText === 'Redo' && (diagram as any).historyManager.redoStack.length === 0) {
-    //       return true;
-    //   }
       if (itemText === 'Select All') {
           if (diagram.nodes.length === 0 && diagram.connectors.length === 0) {
               return true;
@@ -1101,19 +981,6 @@ public enableMenuItems(itemText: string, diagram: Diagram): boolean {
     { text: '100%' }, { text: '75%' }, { text: '50%' }, { text: '25%' }, { separator: true },
     { text: 'Fit To Screen' }
 ];
-//   public dragEnter(args: IDragEnterEventArgs): void {
-//     let obj: NodeModel = args.element as NodeModel;
-//     if (obj && obj.width && obj.height) {
-//       let oWidth: number = obj.width;
-//       let oHeight: number = obj.height;
-//       let ratio: number = 100 / obj.width;
-//       obj.width = 100;
-//       obj.height *= ratio;
-//       // obj.offsetX += (obj.width - oWidth) / 2;
-//       // obj.offsetY += (obj.height - oHeight) / 2;
-//     //   obj.style = { fill: '#357BD2', strokeColor: 'white' };
-//     }
-//   }
 // Initialize Nodes for diagram
 public nodes:NodeModel[] = [
   {
@@ -1349,7 +1216,7 @@ public nodes:NodeModel[] = [
     var selectedObjects = (diagram).selectedItems.nodes.concat(diagram.selectedItems.connectors as object);
         for(let i:number = 0;i<selectedObjects.length;i++)
         {
-           selectedObjects[i].flip = flipType === 'Flip Horizontal'? 'Horizontal':'Vertical';
+           selectedObjects[i].flip ^= flipType === 'Flip Horizontal'? FlipDirection.Horizontal:FlipDirection.Vertical;
         }
         diagram.dataBind();
   }

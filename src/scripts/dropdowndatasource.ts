@@ -58,80 +58,100 @@ export class DropDownDataSources {
     },
     { prefixIcon: 'sf-icon-properties' , tooltipText: 'Hide/Show property',template:'<button id="hideProperty"></button>',align:'Right'}
 ];
-    public getFileMenuItems: ItemModel[] = [
-        { text: 'New' ,iconCss:'sf-icon-new'}, { text: 'Open',iconCss:'sf-icon-open' }, { separator: true },
-        { text: 'Save', iconCss: 'sf-icon-save' },
-        { text: 'Export', iconCss: 'sf-icon-export' }, { separator: true },
-        { text: 'Print', iconCss: 'sf-icon-print' }
-    ];
 
-    public getEditMenuItems: MenuItemModel[] = [
-        { text: 'Undo', iconCss: 'sf-icon-undo' },
-        { text: 'Redo', iconCss: 'sf-icon-redo' },
-        { separator: true },
-        { text: 'Cut', iconCss: 'sf-icon-cut' },
-        { text: 'Copy', iconCss: 'sf-icon-copy' },
-        { text: 'Paste', iconCss: 'sf-icon-paste' },
-        { separator: true },
-        { text: 'Rotate',iconCss:'sf-icon-rotate', 
-        items:[
-            { text: 'Rotate Right 90', iconCss: 'sf-icon-rotate-clockwise' },
-            { text: 'Rotate Left 90', iconCss: 'sf-icon-rotate-counter-clockwise' },
-            { text: 'Flip Vertical', iconCss: 'sf-icon-flip-vertical' },
-            { text: 'Flip Horizontal', iconCss: 'sf-icon-flip-horizontal' },
-        ]
-    },
-        { text: 'Delete', iconCss: 'sf-icon-delete' },
-        { separator: true },
-        {text: 'Order Commands',iconCss:'sf-icon-Order',
-            items:[ { text: 'Bring Forward', iconCss: 'sf-icon-bring-forward' },
-                    { text: 'Bring To Front', iconCss: 'sf-icon-bring-to-front' },
-                    { text: 'Send Backward', iconCss: 'sf-icon-send-backward' },
-                    { text: 'Send To Back', iconCss: 'sf-icon-send-to-back' },
+    public menuItems: MenuItemModel[] = [
+        {
+            text: 'File',
+            items: [
+                { text: 'New' ,iconCss:'sf-icon-new'}, { text: 'Open',iconCss:'sf-icon-open' }, { separator: true },
+                { text: 'Save', iconCss: 'sf-icon-save' },
+                { text: 'Export', iconCss: 'sf-icon-export' }, { separator: true },
+                { text: 'Print', iconCss: 'sf-icon-print' }
             ]
-        } 
-      ];
-      
-    public getDesignMenuItems: MenuItemModel[] = [
-        { text: 'Orientation',iconCss: 'sf-icon-page_orientation',
-        items:[
-            { text: 'Landscape', iconCss: 'sf-icon-check-tick' },
-            { text: 'Portrait', iconCss: '' }
-        ]    
         },
-        { text: 'Size', iconCss: 'em-icons e-copy',
-        items:this.paperList1()
-        }
-      ];
-    public getToolsMenuItems: MenuItemModel[] = [
-        { text: 'Selection Tool',iconCss: 'sf-icon-pointer' },
-        { text: 'Pan Tool', iconCss: 'sf-icon-pan tb-icons' },
-        { separator: true },
-        { text: 'Connector Tool',iconCss:'sf-icon-orthogonal_line',
-        items:[
-            {text:'Straight',iconCss: 'sf-icon-straight_line'},
-            {text:'Orthogonal',iconCss: 'sf-icon-orthogonal_line'},
-            {text:'Bezier',iconCss: 'sf-icon-bezier'},
-        ] 
-    }
-      ];
-    public getSelectMenuItems: ItemModel[] = [
-        { text: 'Select All',},
-        { text: 'Select All Nodes', },
-        { text: 'Select All Connectors', },
-        { text: 'Deselect All', }
-      ];
-
-  public getViewMenuItems: ItemModel[] = [
-    { text: 'Show Lines',iconCss: 'sf-icon-check-tick'},
-    { text: 'Snap To Grid',iconCss : 'sf-icon-check-tick'},
-    { text: 'Snap To Object',iconCss : 'sf-icon-check-tick'},
-    { text: 'Show Ruler',iconCss: 'sf-icon-check-tick'},
-    { text: 'Show Page Breaks',iconCss: ''},
-    { separator: true },
-    { text: 'Fit To Width'},
-    { text: 'Fit To Page'},
-      ];
+        {
+            text: 'Edit',
+            items: [
+                { text: 'Undo', iconCss: 'sf-icon-undo' },
+                { text: 'Redo', iconCss: 'sf-icon-redo' },
+                { separator: true },
+                { text: 'Cut', iconCss: 'sf-icon-cut' },
+                { text: 'Copy', iconCss: 'sf-icon-copy' },
+                { text: 'Paste', iconCss: 'sf-icon-paste' },
+                { separator: true },
+                { text: 'Rotate',iconCss:'sf-icon-rotate', 
+                items:[
+                    { text: 'Rotate Right 90', iconCss: 'sf-icon-rotate-clockwise' },
+                    { text: 'Rotate Left 90', iconCss: 'sf-icon-rotate-counter-clockwise' },
+                    { text: 'Flip Vertical', iconCss: 'sf-icon-flip-vertical' },
+                    { text: 'Flip Horizontal', iconCss: 'sf-icon-flip-horizontal' },
+                ]
+            },
+                { text: 'Delete', iconCss: 'sf-icon-delete' },
+                { separator: true },
+                {text: 'Order Commands',iconCss:'sf-icon-Order',
+                    items:[ { text: 'Bring Forward', iconCss: 'sf-icon-bring-forward' },
+                            { text: 'Bring To Front', iconCss: 'sf-icon-bring-to-front' },
+                            { text: 'Send Backward', iconCss: 'sf-icon-send-backward' },
+                            { text: 'Send To Back', iconCss: 'sf-icon-send-to-back' },
+                    ]
+                }
+            ]
+        },
+        {
+            text: 'Design',
+            items: [
+                { text: 'Orientation',iconCss: 'sf-icon-page_orientation',
+                    items:[
+                        { text: 'Landscape', iconCss: 'sf-icon-check-tick' },
+                        { text: 'Portrait', iconCss: '' }
+                    ]    
+                    },
+                    { text: 'Size', iconCss: 'em-icons e-copy',
+                    items:this.paperList1()
+                    }
+            ]
+        },
+        {
+            text: 'Select',
+            items: [
+                { text: 'Select All',},
+                { text: 'Select All Nodes', },
+                { text: 'Select All Connectors', },
+                { text: 'Deselect All', }
+            ]
+        },
+        {
+            text: 'Tools',
+            items: [
+                { text: 'Selection Tool',iconCss: 'sf-icon-pointer' },
+                { text: 'Pan Tool', iconCss: 'sf-icon-pan tb-icons' },
+                { separator: true },
+                { text: 'Connector Tool',iconCss:'sf-icon-orthogonal_line',
+                items:[
+                    {text:'Straight',iconCss: 'sf-icon-straight_line'},
+                    {text:'Orthogonal',iconCss: 'sf-icon-orthogonal_line'},
+                    {text:'Bezier',iconCss: 'sf-icon-bezier'},
+                ] 
+                }
+            ]
+        },
+        {
+            text: 'View',
+            items: [
+                { text: 'Show Lines',iconCss: 'sf-icon-check-tick'},
+                { text: 'Snap To Grid',iconCss : 'sf-icon-check-tick'},
+                { text: 'Snap To Object',iconCss : 'sf-icon-check-tick'},
+                { text: 'Show Ruler',iconCss: 'sf-icon-check-tick'},
+                { text: 'Show Page Breaks',iconCss: ''},
+                { text: 'Show Multiple Page',iconCss: ''},
+                { separator: true },
+                { text: 'Fit To Width'},
+                { text: 'Fit To Page'},
+            ]
+        },
+       
+    ];
     public paperList1(){ var items= [
         { text: 'Letter (8.5 in x 11 in)', value: 'Letter',iconCss:'sf-icon-check-tick' }, { text: 'Legal (8.5 in x 14 in)', value: 'Legal' },
         { text: 'Tabloid (279 mm x 432 mm)', value: 'Tabloid' }, { text: 'A3 (297 mm x 420 mm)', value: 'A3' },

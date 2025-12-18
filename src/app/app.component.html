@@ -78,21 +78,6 @@
         width: auto!important;
     }
 </style>
-<ejs-contextmenu id='editContextMenu' [animationSettings]='animationSettings' [items]='dropDownDataSources.getEditMenuItems'
-    (onOpen)='utilityMethods.editContextMenuOpen($event)' cssClass="editMenu" (beforeItemRender)="beforeItemRender($event)"
-    (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)" (select)="menuClick($event)">
-    <!-- (beforeOpen)="arrangeMenuBeforeOpen($event)"  -->
-</ejs-contextmenu>
-<ejs-contextmenu id='designContextMenu' #designContextMenu [animationSettings]='animationSettings' [items]='dropDownDataSources.getDesignMenuItems'
-    (onOpen)='utilityMethods.designContextMenuOpen($event)' cssClass="designMenu" (beforeItemRender)="beforeItemRender($event)"
-    (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)" (select)="menuClick($event)">
-    <!-- (beforeOpen)="arrangeMenuBeforeOpen($event)"  -->
-</ejs-contextmenu>
-<ejs-contextmenu id='toolsContextMenu' #toolsContextMenu [animationSettings]='animationSettings' [items]='dropDownDataSources.getToolsMenuItems'
-    (onOpen)='utilityMethods.toolsContextMenuOpen($event)' cssClass="toolsMenu" (beforeItemRender)="beforeItemRender($event)"
-    (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)" (select)="menuClick($event)">
-    <!-- (beforeOpen)="arrangeMenuBeforeOpen($event)"  -->
-</ejs-contextmenu>
 <div class='diagrambuilder-container'>
   <div class='header navbar'>
       <div class="db-header-container">
@@ -102,64 +87,11 @@
               />
               <span id='diagramreport' class="db-diagram-name" style="float:right"></span>
           </div>
-           <div class='db-menu-container'>
-              <div class="db-menu-style">
-                  <button ejs-dropdownbutton id="btnFileMenu" #btnFileMenu cssClass='db-dropdown-menu'  content="File"
-                  [items]='dropDownDataSources.getFileMenuItems' (select)="menuClick($event)"
-                  (beforeItemRender)="beforeItemRender($event)"
-                  (beforeOpen)="utilityMethods.arrangeMenuBeforeOpen($event)" 
-                  (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)"
-                      >
-                  </button>
-              </div>
-              <div class="db-menu-style">
-                  <button ejs-dropdownbutton id="btnEditMenu" #btnEditMenu cssClass='db-dropdown-menu' 
-              
-                      content="Edit" (select)="menuClick($event)"
-                      (beforeItemRender)="beforeItemRender($event)" 
-                      (beforeOpen)="utilityMethods.arrangeMenuBeforeOpen($event)"
-                      target='.e-contextmenu-wrapper.editMenu'
-                      (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)">
-                  </button>
-              </div>
-              <div class="db-menu-style">
-                  <button ejs-dropdownbutton id="btnDesignMenu" cssClass='db-dropdown-menu' 
-                      content="Design"
-                      (select)="menuClick($event)" 
-                      target='.e-contextmenu-wrapper.designMenu'
-                      (beforeItemRender)="beforeItemRender($event)" 
-                      (beforeOpen)="utilityMethods.arrangeMenuBeforeOpen($event)"
-                      (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)">
-                  </button>
-              </div>
-              <div class="db-menu-style">
-                  <button ejs-dropdownbutton id="btnToolsMenu" cssClass='db-dropdown-menu' 
-                      target='.e-contextmenu-wrapper.toolsMenu' 
-                      content="Tools"
-                      (select)="menuClick($event)" 
-                      (beforeOpen)="utilityMethods.arrangeMenuBeforeOpen($event)" 
-                      (beforeItemRender)="beforeItemRender($event)" 
-                      (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)">
-                  </button>
-              </div>
-              <div class="db-menu-style">
-                  <button ejs-dropdownbutton id="btnSelectMenu" cssClass='db-dropdown-menu' 
-                      [items]='dropDownDataSources.getSelectMenuItems' content="Select"
-                      (select)="menuClick($event)" 
-                      (beforeItemRender)="beforeItemRender($event)" 
-                      (beforeOpen)="utilityMethods.arrangeMenuBeforeOpen($event)"
-                      (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)">
-                  </button>
-              </div>
-              <div class="db-menu-style" >
-                  <button ejs-dropdownbutton id="btnViewMenu" cssClass='db-dropdown-menu' #btnViewMenu 
-                  [items]='dropDownDataSources.getViewMenuItems'
-                      content="View" (select)="menuClick($event)" 
-                      (beforeOpen)="utilityMethods.arrangeMenuBeforeOpen($event)" 
-                      (beforeClose)="utilityMethods.arrangeMenuBeforeClose($event)">
-                  </button>
-              </div> 
-          </div> 
+        <div class='db-menu-container'>
+            <div class="menu-control">
+                <ejs-menu  id='menuBar' #menuBar [items]='dropDownDataSources.menuItems' (select)='menuClick($event)' (beforeOpen)="beforeMenuOpen($event)"></ejs-menu>
+            </div>
+        </div>
       </div>
       <div class='db-toolbar-editor'>
           <div class='db-toolbar-container'>
@@ -375,13 +307,13 @@
                               Dimensions
                           </div>
                           <div class="row db-prop-row">
-                              <div class="col-xs-6 db-col-left" style="width: 97px; padding-right: 5px;">
+                              <div class="col-xs-6 db-col-left" style="width: 100px; padding-right: 5px;">
                                   <div class="db-text-container">
                                       <div class="db-text">
                                           <span>X</span>
                                       </div>
                                       <div class="db-text-input">
-                                          <ejs-numerictextbox style="width: 72px;" id="nodeOffsetX" format="n0" [(value)]="this.selectedItem.nodeProperties.offsetX"></ejs-numerictextbox>
+                                          <ejs-numerictextbox style="width: 75px;" id="nodeOffsetX" format="n0" [(value)]="this.selectedItem.nodeProperties.offsetX"></ejs-numerictextbox>
                                       </div>
                                   </div>
                               </div>
@@ -391,19 +323,19 @@
                                           <span>Y</span>
                                       </div>
                                       <div class="db-text-input">
-                                          <ejs-numerictextbox style="width: 72px;" id="nodeOffsetY" format="n0" [(value)]="this.selectedItem.nodeProperties.offsetY"></ejs-numerictextbox>
+                                          <ejs-numerictextbox style="width: 75px;" id="nodeOffsetY" format="n0" [(value)]="this.selectedItem.nodeProperties.offsetY"></ejs-numerictextbox>
                                       </div>
                                   </div>
                               </div>
                           </div>
                           <div class="row db-prop-row">
-                              <div class="col-xs-6 db-col-left" style="width: 97px; padding-right: 5px;">
+                              <div class="col-xs-6 db-col-left" style="width: 100px; padding-right: 5px;">
                                   <div class="db-text-container">
                                       <div class="db-text">
                                           <span>W</span>
                                       </div>
                                       <div class="db-text-input">
-                                          <ejs-numerictextbox style="width: 72px;" id="nodeWidth"  format="n0" [(value)]="this.selectedItem.nodeProperties.width"></ejs-numerictextbox>
+                                          <ejs-numerictextbox style="width: 75px;" id="nodeWidth"  format="n0" [(value)]="this.selectedItem.nodeProperties.width"></ejs-numerictextbox>
                                       </div>
                                   </div>
                               </div>
@@ -413,7 +345,7 @@
                                           <span>H</span>
                                       </div>
                                       <div class="db-text-input">
-                                          <ejs-numerictextbox style="width: 72px;" id="nodeHeight"  format="n0" [(value)]="this.selectedItem.nodeProperties.height"></ejs-numerictextbox>
+                                          <ejs-numerictextbox style="width: 75px;" id="nodeHeight"  format="n0" [(value)]="this.selectedItem.nodeProperties.height"></ejs-numerictextbox>
                                       </div>
                                   </div>
                               </div>
@@ -521,11 +453,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xs-4 db-col-center" style="width: 70px;margin-left: 25px;">
+                                <div class="col-xs-4 db-col-center" style="width: 80px;margin-left: 20px;">
                                     <div class="db-text-container">
                                     <div class="db-text-input">
                                     <ejs-numerictextbox [(value)]="selectedItem.nodeProperties.strokeWidth" 
-                                    style="width: 64px;" min="1" step="0.5" id="nodeStrokeWidth" type="text" ></ejs-numerictextbox>
+                                    style="width: 70px;" min="1" step="0.5" id="nodeStrokeWidth" type="text" ></ejs-numerictextbox>
                                     </div>
                                     </div>
                                 </div>
@@ -826,25 +758,6 @@
     </ng-template>
 </ejs-dialog>
 
-<ejs-dialog id="printDialog" #printDialog width='335px' header='Print Diagram' [target]='dlgTarget' isModal='true' [animationSettings]='dialogAnimationSettings'
-    [buttons]='printingButtons' [visible]='dialogVisibility' showCloseIcon='true'>
-    <ng-template #content>
-        <div id="printDialogContent">
-            <div class="row">
-                <div class="row">
-                    Region
-                </div>
-                <div class="row db-dialog-child-prop-row">
-                    <ejs-dropdownlist [(value)]="this.selectedItem.printSettings.region" [dataSource]='dropDownDataSources.diagramRegions' [fields]='dropdownListFields'>
-                    </ejs-dropdownlist>
-                </div>
-            </div>
-            <div class="row db-dialog-prop-row" style="margin-top: 16px">
-                <ejs-checkbox id='printMultiplePage' label="Scale to fit 1 page" [(checked)]="selectedItem.printSettings.multiplePage"></ejs-checkbox>
-            </div>
-        </div>
-    </ng-template>
-</ejs-dialog>
 <ejs-dialog id="hyperlinkDialog" #hyperlinkDialog width='400px' header='Insert Link' [target]='dlgTarget' isModal='true'
     [animationSettings]='dialogAnimationSettings' [visible]='dialogVisibility' [buttons]='hyperlinkButtons' showCloseIcon='true'>
     <ng-template #content>

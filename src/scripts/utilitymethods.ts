@@ -1,4 +1,4 @@
-import { Connector, ConnectorModel, Diagram,DiagramTools,NodeModel, SelectorModel, Node, NodeConstraints, ConnectorConstraints, IHistoryChangeArgs, SnapConstraints, DiagramModel, Gradient, GradientModel, GradientType, DiagramGradient, PointModel, HorizontalAlignment, VerticalAlignment, TextAlign, DiagramBeforeMenuOpenEventArgs, BpmnShapeModel, BpmnFlow, TextStyleModel } from "@syncfusion/ej2-diagrams";
+import { Connector, ConnectorModel, Diagram,DiagramTools,NodeModel, SelectorModel, Node, NodeConstraints, ConnectorConstraints, IHistoryChangeArgs, SnapConstraints, DiagramModel, Gradient, GradientModel, GradientType, DiagramGradient, PointModel, HorizontalAlignment, VerticalAlignment, TextAlign, DiagramBeforeMenuOpenEventArgs, BpmnShapeModel, BpmnFlow, TextStyleModel, FlipDirection } from "@syncfusion/ej2-diagrams";
 import { ClickEventArgs, ItemModel, MenuModel, OpenCloseMenuEventArgs, Toolbar } from "@syncfusion/ej2-angular-navigations";
 import { BeforeOpenCloseMenuEventArgs, MenuEventArgs } from "@syncfusion/ej2-angular-splitbuttons";
 import { formatUnit, createElement, closest } from '@syncfusion/ej2-base';
@@ -99,7 +99,7 @@ export class UtilityMethods {
         var selectedObjects = (diagram as any).selectedItems.nodes.concat(diagram.selectedItems.connectors);
         for(let i:number = 0;i<selectedObjects.length;i++)
         {
-           selectedObjects[i].flip = flipType === 'Flip Horizontal'? 'Horizontal':'Vertical';
+           selectedObjects[i].flip ^= flipType === 'Flip Horizontal'? FlipDirection.Horizontal:FlipDirection.Vertical;
         }
         diagram.dataBind();
       };
@@ -286,8 +286,8 @@ export class UtilityMethods {
         }
     };
     public viewSelectionChange(diagram:Diagram,pageBreak:any){
-    var items = (document.getElementById('btnViewMenu') as any).ej2_instances[0].items;
-    items[4].iconCss = diagram.pageSettings.showPageBreaks ? 'sf-icon-check-tick':'';
+    var items = (document.getElementById('menuBar') as any).ej2_instances[0].items;
+    items[5].items[4].iconCss = diagram.pageSettings.showPageBreaks ? 'sf-icon-check-tick':'';
     pageBreak.checked = diagram.pageSettings.showPageBreaks;
     }
 

@@ -1,5 +1,5 @@
 import { AnnotationAlignment, BpmnActivity, BpmnBoundary, BpmnDataObjects, BpmnEvents, BpmnFlow, BpmnGateway, BpmnGateways, BpmnLoops, BpmnShapeModel, BpmnTasks, BpmnTriggers, Connector, ConnectorModel, ContextMenuItemModel, Diagram, DiagramBeforeMenuOpenEventArgs, HorizontalAlignment, IDragEnterEventArgs, IEndChangeEventArgs, IHistoryChangeArgs, IRotationEventArgs, ISelectionChangeEventArgs, ISizeChangeEventArgs, NodeModel,  PathAnnotationModel,  SelectorModel,  ShapeAnnotationModel, TextAlign, TextStyleModel, UserHandleEventsArgs, UserHandleModel, VerticalAlignment } from "@syncfusion/ej2-angular-diagrams";
-import { PathAnnotation,ShapeAnnotation ,SelectorConstraints, IDropEventArgs} from '@syncfusion/ej2-diagrams'
+import { PathAnnotation,ShapeAnnotation ,SelectorConstraints, IDropEventArgs, randomId} from '@syncfusion/ej2-diagrams'
 import { AppComponent } from "src/app/app.component";
 import { NodeProperties, SelectorViewModel } from "./selector";
 import { UtilityMethods } from "./utilitymethods";
@@ -492,138 +492,140 @@ export class DiagramClientSideEvents {
 
     public contextMenuClick(args:MenuEventArgs){
         let diagram = this.selectedItem.diagram;
-        if (diagram.selectedItems.nodes.length > 0 ) {
-            var bpmnShape:BpmnShapeModel = diagram.selectedItems.nodes[0].shape as BpmnShapeModel;
-            if (args.item.iconCss.indexOf('e-adhocs') > -1) {
-                bpmnShape.activity.subProcess.adhoc = !bpmnShape.activity.subProcess.adhoc;
-            }
-            if (args.item.iconCss.indexOf("e-event") > -1) {
-                bpmnShape.event.event = args.item.id as BpmnEvents;
-            }
-            if (args.item.iconCss.indexOf("e-trigger") > -1) {
-                bpmnShape.event.trigger = args.item.text as BpmnTriggers;
-            }
-            if (args.item.iconCss.indexOf("e-loop") > -1) {
-                var loop = (args.item.id === 'LoopNone') ? 'None' : args.item.id;
-                if (bpmnShape.activity.activity === 'Task') {
-                    bpmnShape.activity.task.loop = loop as BpmnLoops;
+        if (args.item && args.item.items.length === 0) {
+            if (diagram.selectedItems.nodes.length > 0 ) {
+                var bpmnShape:BpmnShapeModel = diagram.selectedItems.nodes[0].shape as BpmnShapeModel;
+                if (args.item.iconCss.indexOf('e-adhocs') > -1) {
+                    bpmnShape.activity.subProcess.adhoc = !bpmnShape.activity.subProcess.adhoc;
                 }
-                if (bpmnShape.activity.activity === 'SubProcess') {
-                    bpmnShape.activity.subProcess.loop = loop as BpmnLoops;
+                if (args.item.iconCss.indexOf("e-event") > -1) {
+                    bpmnShape.event.event = args.item.id as BpmnEvents;
                 }
-            }
-            if (args.item.iconCss.indexOf("e-compensation") > -1) {
-                // var compensation = (args.item.id === 'taskCompensation') ? true : false;
-                if (bpmnShape.activity.activity === 'Task') {
-                    bpmnShape.activity.task.compensation = !bpmnShape.activity.task.compensation ;
+                if (args.item.iconCss.indexOf("e-trigger") > -1) {
+                    bpmnShape.event.trigger = args.item.text as BpmnTriggers;
                 }
-                if (bpmnShape.activity.activity === 'SubProcess') {
-                    bpmnShape.activity.subProcess.compensation = ! bpmnShape.activity.subProcess.compensation;
+                if (args.item.iconCss.indexOf("e-loop") > -1) {
+                    var loop = (args.item.id === 'LoopNone') ? 'None' : args.item.id;
+                    if (bpmnShape.activity.activity === 'Task') {
+                        bpmnShape.activity.task.loop = loop as BpmnLoops;
+                    }
+                    if (bpmnShape.activity.activity === 'SubProcess') {
+                        bpmnShape.activity.subProcess.loop = loop as BpmnLoops;
+                    }
                 }
-            }
-            if (args.item.iconCss.indexOf('e-call') > -1) {
-                // var compensations = (args.item.id === 'CallNone') ? false : true;
-                if (bpmnShape.activity.activity === 'Task') {
-                    bpmnShape.activity.task.call = !bpmnShape.activity.task.call;
+                if (args.item.iconCss.indexOf("e-compensation") > -1) {
+                    // var compensation = (args.item.id === 'taskCompensation') ? true : false;
+                    if (bpmnShape.activity.activity === 'Task') {
+                        bpmnShape.activity.task.compensation = !bpmnShape.activity.task.compensation ;
+                    }
+                    if (bpmnShape.activity.activity === 'SubProcess') {
+                        bpmnShape.activity.subProcess.compensation = ! bpmnShape.activity.subProcess.compensation;
+                    }
                 }
-            }
-            if (args.item.id === 'SubProcess' || args.item.id === 'Task') {
-                if (args.item.id === 'Task') {
-                    bpmnShape.activity.activity = 'Task';
-                    bpmnShape.activity.subProcess.collapsed = false;
+                if (args.item.iconCss.indexOf('e-call') > -1) {
+                    // var compensations = (args.item.id === 'CallNone') ? false : true;
+                    if (bpmnShape.activity.activity === 'Task') {
+                        bpmnShape.activity.task.call = !bpmnShape.activity.task.call;
+                    }
                 }
-                else {
-                    bpmnShape.activity.activity = 'SubProcess';
-                    bpmnShape.activity.subProcess.collapsed = true;
+                if (args.item.id === 'SubProcess' || args.item.id === 'Task') {
+                    if (args.item.id === 'Task') {
+                        bpmnShape.activity.activity = 'Task';
+                        bpmnShape.activity.subProcess.collapsed = false;
+                    }
+                    else {
+                        bpmnShape.activity.activity = 'SubProcess';
+                        bpmnShape.activity.subProcess.collapsed = true;
+                    }
                 }
-            }
-            if (args.item.iconCss.indexOf('e-boundry') > -1) {
-                let call = args.item.id;
-                if (args.item.id !== 'Default') {
-                    call = (args.item.id === 'BoundryEvent') ? 'Event' : 'Call';
+                if (args.item.iconCss.indexOf('e-boundry') > -1) {
+                    let call = args.item.id;
+                    if (args.item.id !== 'Default') {
+                        call = (args.item.id === 'BoundryEvent') ? 'Event' : 'Call';
+                    }
+                    bpmnShape.activity.subProcess.boundary = call as BpmnBoundary;
                 }
-                bpmnShape.activity.subProcess.boundary = call as BpmnBoundary;
-            }
-            if (args.item.iconCss.indexOf('e-data') > -1) {
-                var data = args.item.id === 'DataObjectNone' ? 'None' : args.item.id;
-                bpmnShape.dataObject.type = data as BpmnDataObjects;
-            }
-            if (args.item.iconCss.indexOf('e-collection') > -1) {
-                // var collection = (args.item.id === 'Collectioncollection') ? true : false;
-                bpmnShape.dataObject.collection =!bpmnShape.dataObject.collection;
-            }
-            if (args.item.iconCss.indexOf("e-task") > -1) {
-                let task:string;
-                task = task === 'TaskNone' ? 'None' : args.item.id;
-                if (bpmnShape.activity.activity === 'Task') {
-                    bpmnShape.activity.task.type = task as BpmnTasks;
+                if (args.item.iconCss.indexOf('e-data') > -1) {
+                    var data = args.item.id === 'DataObjectNone' ? 'None' : args.item.id;
+                    bpmnShape.dataObject.type = data as BpmnDataObjects;
                 }
-            }
-            if (args.item.iconCss.indexOf("e-gate") > -1) {
-                var gate = args.item.id.replace('Gateway', '');
-                if (bpmnShape.shape === 'Gateway') {
-                    bpmnShape.gateway.type = gate as BpmnGateways;
+                if (args.item.iconCss.indexOf('e-collection') > -1) {
+                    // var collection = (args.item.id === 'Collectioncollection') ? true : false;
+                    bpmnShape.dataObject.collection =!bpmnShape.dataObject.collection;
                 }
+                if (args.item.iconCss.indexOf("e-task") > -1) {
+                    let task:string;
+                    task = task === 'TaskNone' ? 'None' : args.item.id;
+                    if (bpmnShape.activity.activity === 'Task') {
+                        bpmnShape.activity.task.type = task as BpmnTasks;
+                    }
+                }
+                if (args.item.iconCss.indexOf("e-gate") > -1) {
+                    var gate = args.item.id.replace('Gateway', '');
+                    if (bpmnShape.shape === 'Gateway') {
+                        bpmnShape.gateway.type = gate as BpmnGateways;
+                    }
+                }
+                diagram.dataBind();
             }
+            if(diagram.selectedItems.connectors.length && (diagram.selectedItems.connectors[0].shape as BpmnFlow))
+            {
+                if(args.item.id === 'Association')
+                {
+                    ((diagram.selectedItems.connectors[0].shape as BpmnFlow) as BpmnFlow).flow = 'Association';
+                }
+                if(args.item.id === 'Sequence')
+                {
+                    (diagram.selectedItems.connectors[0].shape as BpmnFlow).flow = 'Sequence';
+                }
+                if(args.item.id === 'MessageFlow')
+                {
+                    (diagram.selectedItems.connectors[0].shape as BpmnFlow).flow = 'Message';
+                }
+                if(args.item.id === 'None')
+                {
+                    (diagram.selectedItems.connectors[0].shape as BpmnFlow).flow === 'Sequence' ? 
+                    (diagram.selectedItems.connectors[0].shape as BpmnFlow).sequence = 'Default':
+                    (diagram.selectedItems.connectors[0].shape as BpmnFlow).flow === 'Association'?
+                    (diagram.selectedItems.connectors[0].shape as BpmnFlow).association = 'Default':
+                    (diagram.selectedItems.connectors[0].shape as BpmnFlow).message = 'Default'
+                    ;
+                }
+                if(args.item.id === 'Directional' || args.item.id === 'BiDirectional')
+                {
+                    args.item.id === 'Directional' ? 
+                    (diagram.selectedItems.connectors[0].shape as BpmnFlow).association = 'Directional':
+                    (diagram.selectedItems.connectors[0].shape as BpmnFlow).association = 'BiDirectional';
+                }
+                if(args.item.id === 'Conditional Flow' || args.item.id === 'Normal Flow')
+                {
+                    args.item.id === 'Conditional Flow' ? 
+                    (diagram.selectedItems.connectors[0].shape as BpmnFlow).sequence = 'Conditional':
+                    (diagram.selectedItems.connectors[0].shape as BpmnFlow).sequence = 'Normal';
+                }
+                if(args.item.id === 'InitiatingMessage' || args.item.id === 'NonInitiatingMessage')
+                {
+                    args.item.id === 'InitiatingMessage' ? 
+                    (diagram.selectedItems.connectors[0].shape as BpmnFlow).message = 'InitiatingMessage':
+                    (diagram.selectedItems.connectors[0].shape as BpmnFlow).message = 'NonInitiatingMessage';
+                }
             diagram.dataBind();
-        }
-        if(diagram.selectedItems.connectors.length && (diagram.selectedItems.connectors[0].shape as BpmnFlow))
-        {
-            if(args.item.id === 'Association')
-            {
-                ((diagram.selectedItems.connectors[0].shape as BpmnFlow) as BpmnFlow).flow = 'Association';
             }
-            if(args.item.id === 'Sequence')
-            {
-                (diagram.selectedItems.connectors[0].shape as BpmnFlow).flow = 'Sequence';
+            if (args.item.id === 'Cut') {
+                diagram.cut();
+            }if (args.item.id === 'Copy') {
+                diagram.copy();
+            }if (args.item.id === 'Paste') {
+                diagram.paste();
+            }if (args.item.id === 'Delete'){
+                diagram.remove();
             }
-            if(args.item.id === 'MessageFlow')
-            {
-                (diagram.selectedItems.connectors[0].shape as BpmnFlow).flow = 'Message';
+            if (args.item.id === 'SelectAll'){
+                diagram.selectAll();
             }
-            if(args.item.id === 'None')
-            {
-                (diagram.selectedItems.connectors[0].shape as BpmnFlow).flow === 'Sequence' ? 
-                (diagram.selectedItems.connectors[0].shape as BpmnFlow).sequence = 'Default':
-                (diagram.selectedItems.connectors[0].shape as BpmnFlow).flow === 'Association'?
-                (diagram.selectedItems.connectors[0].shape as BpmnFlow).association = 'Default':
-                (diagram.selectedItems.connectors[0].shape as BpmnFlow).message = 'Default'
-                ;
+            if(args.item.id === 'TextAnnotation'){
+                diagram.addTextAnnotation({ id: 'newAnnotation_'+randomId(), text: 'Text', length: 150, angle: 290 }, diagram.selectedItems.nodes[0])
             }
-            if(args.item.id === 'Directional' || args.item.id === 'BiDirectional')
-            {
-                args.item.id === 'Directional' ? 
-                (diagram.selectedItems.connectors[0].shape as BpmnFlow).association = 'Directional':
-                (diagram.selectedItems.connectors[0].shape as BpmnFlow).association = 'BiDirectional';
-            }
-            if(args.item.id === 'Conditional Flow' || args.item.id === 'Normal Flow')
-            {
-                args.item.id === 'Conditional Flow' ? 
-                (diagram.selectedItems.connectors[0].shape as BpmnFlow).sequence = 'Conditional':
-                (diagram.selectedItems.connectors[0].shape as BpmnFlow).sequence = 'Normal';
-            }
-            if(args.item.id === 'InitiatingMessage' || args.item.id === 'NonInitiatingMessage')
-            {
-                args.item.id === 'InitiatingMessage' ? 
-                (diagram.selectedItems.connectors[0].shape as BpmnFlow).message = 'InitiatingMessage':
-                (diagram.selectedItems.connectors[0].shape as BpmnFlow).message = 'NonInitiatingMessage';
-            }
-        diagram.dataBind();
-        }
-        if (args.item.id === 'Cut') {
-            diagram.cut();
-        }if (args.item.id === 'Copy') {
-            diagram.copy();
-        }if (args.item.id === 'Paste') {
-            diagram.paste();
-        }if (args.item.id === 'Delete'){
-            diagram.remove();
-        }
-        if (args.item.id === 'SelectAll'){
-            diagram.selectAll();
-        }
-        if(args.item.id === 'TextAnnotation'){
-            diagram.addTextAnnotation({ id: 'newAnnotation', text: 'Text', length: 150, angle: 290 }, diagram.selectedItems.nodes[0])
         }
     };
     public diagramClear()
@@ -643,7 +645,7 @@ export class DiagramPropertyBinding {
     public pageOrientationChange(args: any): void {
         if (args.target) {
             var target = args.target;
-            let designContextMenu = (document.getElementById('designContextMenu') as any).ej2_instances[0];
+            let designContextMenu = (document.getElementById('menuBar') as any).ej2_instances[0].items[2];
             let diagram = this.selectedItem.diagram;
             var items = designContextMenu.items;
             var option = target.id ? target.id : (args.currentTarget.ej2_instances[0].iconCss === 'sf-icon-portrait'? 'pagePortrait':'pageLandscape');  
@@ -747,7 +749,7 @@ export class DiagramPropertyBinding {
             diagram.pageSettings.width = 1460;
             diagram.pageSettings.height = 600;
         }
-        let designContextMenu = (document.getElementById('designContextMenu') as any).ej2_instances[0];
+        let designContextMenu = (document.getElementById('menuBar') as any).ej2_instances[0].items[2];
         this.updatePaperSelection(designContextMenu.items[1],args.value);
         diagram.dataBind();
     };
