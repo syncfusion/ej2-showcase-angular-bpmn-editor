@@ -33,7 +33,8 @@ import { AnimationSettingsModel, DialogComponent } from '@syncfusion/ej2-angular
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class AppComponent implements AfterViewInit{
   @ViewChild('diagram')
