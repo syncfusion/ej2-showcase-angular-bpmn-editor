@@ -20,11 +20,7 @@
     "module": "es2022",
     "useDefineForClassFields": false,
     "strictPropertyInitialization": false,
-    "strictNullChecks": false,
-    "lib": [
-      "es2022",
-      "dom"
-    ]
+    "strictNullChecks": false
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
